@@ -1,0 +1,49 @@
+{
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  },
+  "compilerOptions": {
+    "checkJs": true,
+    "lib": [
+      "es2022",
+      "es6",
+      "DOM"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "./*.d.ts"
+    ],
+    "rootDir": "src",
+    "baseUrl": ".",
+    "declaration": true,
+    "removeComments": true,
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@shared/*": [
+        "src/modules/shared/*"
+      ],
+      "@modules/*": [
+        "src/modules/*"
+      ],
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
