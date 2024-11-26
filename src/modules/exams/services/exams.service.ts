@@ -7,6 +7,7 @@ import { CreateExamDTO, UpdateExamDTO } from '../dtos';
 import { ExamsEntity } from '../entities/exams.entity';
 import { UsersService } from '@modules/users/services/users.service';
 import { LabsService } from '@modules/labs/services/labs.service';
+import { ExamTypesService } from '@modules/examTypes/services/examTypes.service';
 
 @Injectable()
 export class ExamsService {
@@ -14,6 +15,7 @@ export class ExamsService {
     @InjectModel(ProvidersEnum.EXAMS) private examsModel: Model<ExamsEntity>,
     @Inject(UsersService) private usersService: UsersService,
     @Inject(LabsService) private labsService: LabsService,
+    @Inject(ExamTypesService) private examTypesService: ExamTypesService,
   ) { }
 
   getById(id: string): Promise<ExamsEntity> {
@@ -32,7 +34,7 @@ export class ExamsService {
     const lab = await this.labsService.getById(body.lab);
     record.user = user;
     record.lab = lab;
-    record = await this.examsModel.create(record); 
+    record = await this.examsModel.create(record);
     return this.examsModel.findById(record._id).populate('user').populate('lab');
   }
 
@@ -50,6 +52,13 @@ export class ExamsService {
       const lab = await this.labsService.getById(body.lab);
       if (!lab) throw new RecordNotFoundException('exams.labNotFound');
       record.lab = lab;
+    }
+    if (body.results) {
+      record.results = await Promise.all(body.results.map(async entry => {
+        const examType = await this.examTypesService.getById(entry.examType);
+        if (!examType) throw new RecordNotFoundException('results.examTypeNotFound');
+        return { ...entry, examType };
+      }));
     }
     return this.examsModel.findByIdAndUpdate(id, record, { new: true }).populate('user').populate('lab');
   }

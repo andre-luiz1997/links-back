@@ -1,8 +1,10 @@
 import { IExams } from "../types/exams";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDateString, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { ResultEntryDTO } from "./result-entry.dto";
 
-export class CreateExamDTO implements Omit<IExams, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user' | 'examType' | 'lab'> {
+export class CreateExamDTO implements Omit<IExams, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user' | 'examType' | 'lab' | 'results'> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -15,4 +17,8 @@ export class CreateExamDTO implements Omit<IExams, '_id' | 'createdAt' | 'update
   @IsString()
   @IsOptional()
   lab?: string;
+  @ApiProperty()
+  @ValidateNested({ each: true })
+  @Type(() => ResultEntryDTO)
+  results: ResultEntryDTO[];
 }

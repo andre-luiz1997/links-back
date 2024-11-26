@@ -2,7 +2,6 @@ import { ExamsSchema } from '@modules/exams/entities/exams.entity';
 import { ExamTypesSchema } from '@modules/examTypes/entities/examTypes.entity';
 import { LabsSchema } from '@modules/labs/entities/labs.entity';
 import { ReferenceValuesSchema } from '@modules/referenceValues/entities/referenceValues.entity';
-import { ResultsSchema } from '@modules/results/entities/results.entity';
 import { UsersSchema } from '@modules/users/entities/users.entity';
 import type { Schema } from "mongoose";
 import { ProvidersEnum } from 'src/constants';
@@ -30,14 +29,9 @@ export const UsersProvider: IProvider = {
 	schema: UsersSchema
 }
 
-export const ResultsProvider: IProvider = {
-	name: ProvidersEnum.RESULTS,
-	schema: ResultsSchema
-}
-
 export const ReferenceValuesProvider: IProvider = {
 	name: ProvidersEnum.REFERENCEVALUES,
 	schema: ReferenceValuesSchema
 }
 
-export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ResultsProvider, ReferenceValuesProvider];
+export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ReferenceValuesProvider];

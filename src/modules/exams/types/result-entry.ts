@@ -1,10 +1,7 @@
-import type { IExams } from "@modules/exams/types/exams";
 import { IExamTypes } from "@modules/examTypes/types/examTypes";
-import type { DBEntity } from "@modules/shared/types";
-export interface IResults extends DBEntity {
-  exam: IExams;
+
+export interface IResultEntry {
   examType: IExamTypes;
-  parameter: string;
   value: number;
   unit?: string;
   observations?: string;

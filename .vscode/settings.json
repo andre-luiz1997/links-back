@@ -9,6 +9,9 @@
     "/src/modules/auth/dtos",
     "/src/modules/auth/types",
     "/src/modules/shared/decorators",
-    "/src/modules/exams/dtos"
+    "/src/modules/exams/dtos",
+    "/src/modules/results/dtos",
+    "/src/modules/exams/types",
+    "/src/modules/exams/entities"
   ]
 }

@@ -4,6 +4,8 @@ import { UsersEntity } from "@modules/users/entities/users.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { Schema, Types } from "mongoose";
 import { ProvidersEnum } from "src/constants";
+import { ResultEntry, ResultEntrySchema } from "./result-entry.entity";
+
 export class ExamsEntity implements IExams {
   @ApiProperty()
   _id: Types.ObjectId;
@@ -18,6 +20,10 @@ export class ExamsEntity implements IExams {
     required: false
   })
   lab?: LabsEntity;
+  @ApiProperty({
+    type: () => Array<ResultEntry>
+  })
+  results: ResultEntry[];
   @ApiProperty()
   createdAt: Date;
   @ApiProperty({
@@ -34,6 +40,7 @@ export const ExamsSchema = new Schema<ExamsEntity>({
   user: {type: Types.ObjectId, ref: ProvidersEnum.USERS, required: true},
   date: {type: Date, required: true},
   lab: {type: Types.ObjectId, ref: ProvidersEnum.LABS, required: false},
+  results: { type: [ResultEntrySchema], required: false, default: [] },
 }, {
   timestamps: true
 })
