@@ -7,6 +7,7 @@
     "/src/modules/referenceValues/dtos",
     "/src/modules/users/dtos",
     "/src/modules/auth/dtos",
-    "/src/modules/auth/types"
+    "/src/modules/auth/types",
+    "/src/modules/shared/decorators"
   ]
 }
