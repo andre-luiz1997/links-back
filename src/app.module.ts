@@ -9,6 +9,7 @@ import { ExamTypesModule } from '@modules/examTypes/examTypes.module';
 import { ReferenceValuesModule } from '@modules/referenceValues/referenceValues.module';
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
+import { ExamsModule } from '@modules/exams/exams.module';
 
 configureDotEnv();
 
@@ -38,7 +39,8 @@ const mongooseConfigs = getMongooseConfig();
     ExamTypesModule,
     ReferenceValuesModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    ExamsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,6 +8,7 @@
     "/src/modules/users/dtos",
     "/src/modules/auth/dtos",
     "/src/modules/auth/types",
-    "/src/modules/shared/decorators"
+    "/src/modules/shared/decorators",
+    "/src/modules/exams/dtos"
   ]
 }
