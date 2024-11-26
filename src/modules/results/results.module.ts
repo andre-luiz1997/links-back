@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ResultsController } from './controllers/results.controller';
 import { ResultsService } from './services/results.service';
-Module({
+@Module({
 	imports: [],
 	controllers: [ResultsController],
 	providers: [ResultsService],

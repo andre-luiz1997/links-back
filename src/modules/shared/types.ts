@@ -6,3 +6,13 @@ export interface DBEntity {
   updatedAt?: Date;
   deletedAt?: Date;
 }
+
+export interface DefaultService {
+  getById(id: string): Promise<DBEntity>;
+  getAll(): Promise<DBEntity[]>;
+  create(body: any): Promise<DBEntity>;
+  update(id: string, body: any): Promise<DBEntity>;
+  delete(id: string): Promise<DBEntity>;
+}
+
+export * from './address';

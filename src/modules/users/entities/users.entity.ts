@@ -1,11 +1,38 @@
 import type { IUsers } from "@modules/users/types/users";
-import { type IProvider, ProvidersEnum } from "@shared/providers";
-import {Types,Schema} from "mongoose"
-export class UsersEntity implements IUsers {}
-export const UsersSchema = new Schema<UsersEntity>({
-_id: Types.ObjectId,
-})
-export const UsersProvider: IProvider = {
-name: ProvidersEnum.USERS,
-schema: UsersSchema
+import { ApiProperty } from "@nestjs/swagger";
+import { Schema, Types } from "mongoose";
+
+export class UsersEntity implements IUsers {
+  @ApiProperty()
+  _id: Types.ObjectId;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  email: string;
+  @ApiProperty()
+  passwordHash: string;
+  @ApiProperty()
+  createdAt: Date;
+  @ApiProperty({
+    required: false,
+  })
+  updatedAt?: Date;
+  @ApiProperty({
+    required: false,
+  })
+  deletedAt?: Date;
+  @ApiProperty({
+    required: false,
+  })
+  status = true;
 }
+
+export const UsersSchema = new Schema<UsersEntity>({
+  _id: Types.ObjectId,
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  passwordHash: { type: String, required: true, select: false },
+  status: { type: Boolean, required: true, default: true },
+}, {
+  timestamps: true,
+})

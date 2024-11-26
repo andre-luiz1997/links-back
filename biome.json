@@ -17,7 +17,8 @@
 				"noDoubleEquals": "off"
       },
 			"style": {
-				"noParameterAssign": "off"
+				"noParameterAssign": "off",
+				"useImportType": "off"
 			}
 		}
 	},

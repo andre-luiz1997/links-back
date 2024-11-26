@@ -1,0 +1,12 @@
+{
+  "exportall.config.folderListener": [
+    "/src/modules/labs/dtos",
+    "/src/modules/shared/exceptions",
+    "/src/modules/shared/transformers",
+    "/src/modules/examTypes/dtos",
+    "/src/modules/referenceValues/dtos",
+    "/src/modules/users/dtos",
+    "/src/modules/auth/dtos",
+    "/src/modules/auth/types"
+  ]
+}

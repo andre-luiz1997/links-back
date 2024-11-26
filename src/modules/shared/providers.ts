@@ -1,23 +1,43 @@
-import { ExamsProvider } from '@modules/exams/entities/exams.entity';
-import { ExamTypesProvider } from '@modules/examTypes/entities/examTypes.entity';
-import { LabsProvider } from '@modules/labs/entities/labs.entity';
-import { ReferenceValuesProvider } from '@modules/referenceValues/entities/referenceValues.entity';
-import { ResultsProvider } from '@modules/results/entities/results.entity';
-import { UsersProvider } from '@modules/users/entities/users.entity';
+import { ExamsSchema } from '@modules/exams/entities/exams.entity';
+import { ExamTypesSchema } from '@modules/examTypes/entities/examTypes.entity';
+import { LabsSchema } from '@modules/labs/entities/labs.entity';
+import { ReferenceValuesSchema } from '@modules/referenceValues/entities/referenceValues.entity';
+import { ResultsSchema } from '@modules/results/entities/results.entity';
+import { UsersSchema } from '@modules/users/entities/users.entity';
 import type { Schema } from "mongoose";
-
-export enum ProvidersEnum {
-	EXAMTYPES = 'EXAMTYPES',
-	REFERENCEVALUES = 'REFERENCEVALUES',
-	RESULTS = 'RESULTS',
-	USERS = 'USERS',
-	LABS = 'LABS',
-	EXAMS = 'EXAMS',
-}
+import { ProvidersEnum } from 'src/constants';
 
 export interface IProvider {
-  name: ProvidersEnum;
-  schema: Schema;
+	name: ProvidersEnum;
+	schema: Schema;
+}
+export const ExamTypesProvider: IProvider = {
+	name: ProvidersEnum.EXAMTYPES,
+	schema: ExamTypesSchema,
+}
+export const ExamsProvider: IProvider = {
+	name: ProvidersEnum.EXAMS,
+	schema: ExamsSchema
 }
 
-export const Providers: IProvider[] = [ExamsProvider, LabsProvider, UsersProvider, ResultsProvider, ReferenceValuesProvider, ExamTypesProvider];
+export const LabsProvider: IProvider = {
+	name: ProvidersEnum.LABS,
+	schema: LabsSchema
+}
+
+export const UsersProvider: IProvider = {
+	name: ProvidersEnum.USERS,
+	schema: UsersSchema
+}
+
+export const ResultsProvider: IProvider = {
+	name: ProvidersEnum.RESULTS,
+	schema: ResultsSchema
+}
+
+export const ReferenceValuesProvider: IProvider = {
+	name: ProvidersEnum.REFERENCEVALUES,
+	schema: ReferenceValuesSchema
+}
+
+export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ResultsProvider, ReferenceValuesProvider];
