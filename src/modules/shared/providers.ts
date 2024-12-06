@@ -1,3 +1,4 @@
+import { RolesSchema } from '@modules/roles/entities/roles.entity';
 import { ExamsSchema } from '@modules/exams/entities/exams.entity';
 import { ExamTypesSchema } from '@modules/examTypes/entities/examTypes.entity';
 import { LabsSchema } from '@modules/labs/entities/labs.entity';
@@ -34,4 +35,10 @@ export const ReferenceValuesProvider: IProvider = {
 	schema: ReferenceValuesSchema
 }
 
-export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ReferenceValuesProvider];
+
+export const RolesProvider: IProvider = {
+	name: ProvidersEnum.ROLES,
+	schema: RolesSchema
+};
+
+export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ReferenceValuesProvider, RolesProvider];

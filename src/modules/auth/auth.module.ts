@@ -11,7 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 		forwardRef(() => UsersModule),
 		JwtModule.register({
 			secret: JWT.secret,
-			signOptions: { expiresIn: JWT.expiresIn },
+			signOptions: { expiresIn: JWT.ACCESS_TOKEN_EXPIRATION },
 		}),
 	],
 	controllers: [AuthController],

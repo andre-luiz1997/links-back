@@ -12,6 +12,7 @@
     "/src/modules/exams/dtos",
     "/src/modules/results/dtos",
     "/src/modules/exams/types",
-    "/src/modules/exams/entities"
+    "/src/modules/exams/entities",
+    "/src/modules/roles/dtos"
   ]
 }

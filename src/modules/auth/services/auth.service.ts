@@ -14,6 +14,22 @@ export class AuthService {
     @Inject() private jwtService: JwtService
   ) { }
 
+  async refresh(refreshToken: string) {
+    const decoded = this.jwtService.verify(refreshToken, {secret: JWT.secret});
+    const user = await this.usersService.getOne({ _id: decoded._id },true);
+    if (!user) throw new InvalidCredentialsException();
+    const jwtPayload: JwtPayload = {
+      _id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+    }
+
+    return {
+      access_token: this.jwtService.sign(jwtPayload, {secret: JWT.secret, expiresIn: JWT.ACCESS_TOKEN_EXPIRATION }),
+      refresh_token: this.jwtService.sign(jwtPayload, {secret: JWT.secret, expiresIn: JWT.REFRESH_TOKEN_EXPIRATION }),
+    };
+  }
+
   async signin(body: SigninDTO) {
     const user = await this.usersService.getOne({ email: body.email },true);
     if (!user) throw new InvalidCredentialsException();
@@ -24,8 +40,10 @@ export class AuthService {
       email: user.email,
       name: user.name,
     }
-    return this.jwtService.sign(jwtPayload, {
-      secret: JWT.secret
-    });
+
+    return {
+      access_token: this.jwtService.sign(jwtPayload, {secret: JWT.secret, expiresIn: JWT.ACCESS_TOKEN_EXPIRATION }),
+      refresh_token: this.jwtService.sign(jwtPayload, {secret: JWT.secret, expiresIn: JWT.REFRESH_TOKEN_EXPIRATION }),
+    };
   }
 }
