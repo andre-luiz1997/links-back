@@ -1,8 +1,12 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
 import { ExamTypesService } from '../services/examTypes.service';
 import { CreateExamTypeDTO, UpdateExamTypeDTO } from '../dtos';
+import { Pagination } from '@shared/decorators';
+import { PaginationProps } from '@shared/pagination';
+import { DefaultPaginatedResponse } from '@shared/response';
+import { ExamTypesEntity } from '../entities/examTypes.entity';
 
-@Controller('examTypes')
+@Controller('exam-types')
 export class ExamTypesController {
   constructor(
     @Inject(ExamTypesService) private examTypesService: ExamTypesService,
@@ -14,8 +18,10 @@ export class ExamTypesController {
   }
 
   @Get()
-  async getRecords() {
-    return this.examTypesService.getAll();
+  async getRecords(@Pagination() pagination: PaginationProps): Promise<DefaultPaginatedResponse<ExamTypesEntity>> {
+    return {
+      data: await this.examTypesService.getAll(pagination)
+    };
   }
 
   @Post()

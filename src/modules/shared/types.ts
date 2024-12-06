@@ -1,6 +1,8 @@
 import { IUsers } from "@modules/users/types/users";
 import { Request } from "express";
 import type { Types } from "mongoose";
+import { PaginationProps } from "./pagination";
+import { PaginatedResult } from "./response";
 
 export interface DBEntity {
   _id: Types.ObjectId;
@@ -11,7 +13,8 @@ export interface DBEntity {
 
 export interface DefaultService {
   getById(id: string): Promise<DBEntity>;
-  getAll(): Promise<DBEntity[]>;
+  getAll(paginationProps?: PaginationProps): Promise<any>;
+  // getAll(paginationProps?: PaginationProps): Promise<PaginatedResult<DBEntity>>;
   create(body: any): Promise<DBEntity>;
   update(id: string, body: any): Promise<DBEntity>;
   delete(id: string): Promise<DBEntity>;
