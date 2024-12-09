@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateUserDTO, UpdateUserDTO } from '../dtos';
+import { ResponseFactory } from '@shared/response';
 
 @Controller('users')
 export class UsersController {
@@ -25,7 +26,7 @@ export class UsersController {
 
   @Patch(':id')
   async updateRecord(@Param('id') id: string, @Body() body: UpdateUserDTO) {
-    return this.usersService.update(id, body);
+    return ResponseFactory.build(await this.usersService.update(id, body));
   }
 
   @Delete(':id')

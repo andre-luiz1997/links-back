@@ -21,12 +21,12 @@ export class UsersService {
   }
 
   getById(id: string): Promise<UsersEntity> {
-    return this.usersModel.findById(new Types.ObjectId(id)).exec();
+    return this.usersModel.findById(new Types.ObjectId(id)).populate('role').exec();
   }
 
   getOne(where: any, withPassword?: boolean): Promise<UsersEntity | undefined> {
-    if(withPassword) return this.usersModel.findOne(where).select('+passwordHash').exec();
-    return this.usersModel.findOne(where).exec();
+    if(withPassword) return this.usersModel.findOne(where).populate('role').select('+passwordHash').exec();
+    return this.usersModel.findOne(where).populate('role').exec();
   }
 
   getAll(): Promise<UsersEntity[]> {
@@ -41,7 +41,7 @@ export class UsersService {
     if (await this.exists('email', record.email)) throw new Error('user.emailExists');
     if (!record._id) record._id = new Types.ObjectId();
     record.passwordHash = await bcrypt.hash(body.password, 10);
-    return this.usersModel.create(record);
+    return (await this.usersModel.create(record)).populate('role');
   }
 
   async update(id: string, body: UpdateUserDTO): Promise<UsersEntity> {
@@ -54,7 +54,7 @@ export class UsersService {
       record.passwordHash = await bcrypt.hash(body.password, 10);
     }
     body.password = undefined;
-    return this.usersModel.findByIdAndUpdate(id, record, { new: true });
+    return this.usersModel.findByIdAndUpdate(id, record, { new: true }).populate('role').exec();
   }
 
   async delete(id: string): Promise<UsersEntity> {

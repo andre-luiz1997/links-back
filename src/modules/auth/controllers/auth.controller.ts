@@ -44,6 +44,7 @@ export class AuthController {
   }
 
   @Get('/signout')
+  @Public()
   async signout(
     @Res() res: Response
   ) {
