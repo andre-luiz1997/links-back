@@ -27,9 +27,8 @@ export class JwtAuthGuard implements CanActivate {
     const token = req.headers.authorization;
     req.user = null;
     if (!token && !isPublicURL) throw new UnauthorizedException();
-    if (!token && isPublicURL) return true;
-    const userData = await this.authenticate({ token, res });
-    if(!userData) throw new UnauthorizedException();
+    const userData = await this.authenticate({ token, res, isPublic: isPublicURL });
+    if(!userData && !isPublicURL) throw new UnauthorizedException();
     req.user = userData;
     return true;
   }
@@ -52,6 +51,7 @@ export class JwtAuthGuard implements CanActivate {
       if (!userData) throw new UnauthorizedException();
       return userData;
     } catch (error) {
+      if(props.isPublic) return null;
       throw new UnauthorizedException();
     }
   }

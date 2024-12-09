@@ -21,6 +21,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new ValidationExceptionFilter());
   app.use(cookieParser(process.env.COOKIE_KEY));
-  await app.listen(3000);
+  await app.listen(process.env.APP_PORT ?? 3000);
 }
 bootstrap();

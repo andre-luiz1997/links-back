@@ -31,6 +31,7 @@ export class RolesService {
 
   async create(body: CreateRoleDTO): Promise<RolesEntity> {
     const record = new this.rolesModel(body);
+    if (!record._id) record._id = new Types.ObjectId();
     if(await this.exists('name', record.name)) throw new Error('role.nameExists');
     return this.rolesModel.create(record);
   }

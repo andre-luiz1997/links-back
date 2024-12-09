@@ -5,6 +5,8 @@ import { Public } from '@shared/decorators';
 import { Response, Request } from 'express';
 import { JWT } from 'src/constants';
 import { isEmpty } from 'class-validator';
+import { CreateUserDTO } from '@modules/users/dtos';
+import { UsersEntity } from '@modules/users/entities/users.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -49,25 +51,39 @@ export class AuthController {
     return res.send();
   }
 
-  @Post()
-  @Public()
-  async signin(
-    @Res() res: Response,
-    @Body() body: SigninDTO
-  ) {
-    const { access_token, refresh_token } = await this.authService.signin(body);
-
-    res.cookie('refresh-token', refresh_token, {
+  private sign(response: Response, user: UsersEntity, access_token: string, refresh_token: string) {
+    response.cookie('refresh-token', refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: JWT.REFRESH_TOKEN_MAX_AGE,
     });
 
-    return res.send({
+    return response.send({
       data: {
-        access_token
+        access_token,
+        user
       }
     });
+  }
+
+  @Post("/signup")
+  @Public()
+  async signup(
+    @Res() res: Response,
+    @Body() body: CreateUserDTO
+  ) {
+    const { access_token, refresh_token, user } = await this.authService.signup(body);
+    return this.sign(res, user, access_token, refresh_token);
+  }
+
+  @Post()
+  @Public()
+  async signin(
+    @Res() res: Response,
+    @Body() body: SigninDTO
+  ) {
+    const { access_token, refresh_token, user } = await this.authService.signin(body);
+    return this.sign(res, user, access_token, refresh_token);
   }
 }

@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtPayload } from '../types';
 import { JwtService } from '@nestjs/jwt';
 import { JWT } from 'src/constants';
+import { CreateUserDTO } from '@modules/users/dtos';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,15 @@ export class AuthService {
     };
   }
 
+  async signup(body: CreateUserDTO) {
+    const user = await this.usersService.create(body);
+    if(!user) throw new Error('auth.userCreatingError');
+    return this.signin({
+      email: user.email,
+      password: body.password
+    })
+  }
+
   async signin(body: SigninDTO) {
     const user = await this.usersService.getOne({ email: body.email },true);
     if (!user) throw new InvalidCredentialsException();
@@ -40,8 +50,9 @@ export class AuthService {
       email: user.email,
       name: user.name,
     }
-
+    user.passwordHash = undefined;
     return {
+      user,
       access_token: this.jwtService.sign(jwtPayload, {secret: JWT.secret, expiresIn: JWT.ACCESS_TOKEN_EXPIRATION }),
       refresh_token: this.jwtService.sign(jwtPayload, {secret: JWT.secret, expiresIn: JWT.REFRESH_TOKEN_EXPIRATION }),
     };

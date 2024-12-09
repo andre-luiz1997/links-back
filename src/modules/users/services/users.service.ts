@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ProvidersEnum } from 'src/constants';
@@ -6,11 +6,14 @@ import { UsersEntity } from '../entities/users.entity';
 import { RecordNotFoundException } from '@shared/exceptions';
 import { CreateUserDTO, UpdateUserDTO } from '../dtos';
 import * as bcrypt from 'bcrypt';
+import { RolesEntity } from '@modules/roles/entities/roles.entity';
+import { RolesService } from '@modules/roles/services/roles.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(ProvidersEnum.USERS) private usersModel: Model<UsersEntity>,
+    @Inject(RolesService) private rolesService: RolesService
   ) { }
 
   exists(prop: string, value: any, ignoreIds: string[] = []) {
@@ -31,7 +34,10 @@ export class UsersService {
   }
 
   async create(body: CreateUserDTO): Promise<UsersEntity> {
-    const record = new this.usersModel(body);
+    let role: RolesEntity;
+    if(body.role) role = await this.rolesService.getById(body.role);
+    else role = await this.rolesService.getOne({ isDefault: true });
+    const record = new this.usersModel({...body, role});
     if (await this.exists('email', record.email)) throw new Error('user.emailExists');
     if (!record._id) record._id = new Types.ObjectId();
     record.passwordHash = await bcrypt.hash(body.password, 10);
