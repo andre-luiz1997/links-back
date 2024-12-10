@@ -13,6 +13,7 @@
     "/src/modules/results/dtos",
     "/src/modules/exams/types",
     "/src/modules/exams/entities",
-    "/src/modules/roles/dtos"
+    "/src/modules/roles/dtos",
+    "/src/modules/auth/gateways"
   ]
 }

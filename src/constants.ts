@@ -19,3 +19,24 @@ export const JWT = {
 	REFRESH_TOKEN_EXPIRATION: '7d',
 	REFRESH_TOKEN_MAX_AGE: 7 * 24 * 60 * 60 * 1000,
 }
+export type IPermissions = {context: string, permissions: string[]};
+export const PERMISSIONS: IPermissions[] = [
+	{
+		context: 'roles',
+		permissions: [
+			'add',
+			'view',
+			'edit',
+			'delete',
+		]
+	},
+	{
+		context: 'users',
+		permissions: [
+			'add',
+			'view',
+			'edit',
+			'delete',
+		]
+	}
+]

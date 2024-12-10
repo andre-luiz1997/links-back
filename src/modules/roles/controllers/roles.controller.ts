@@ -13,6 +13,11 @@ export class RolesController {
     @Inject(RolesService) private rolesService: RolesService
   ) {}
 
+  @Get('permissions')
+  async getPermissions() {
+    return ResponseFactory.build(await this.rolesService.getPermissions());
+  }
+
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
     return ResponseFactory.build(await this.rolesService.getById(id))
@@ -31,7 +36,9 @@ export class RolesController {
 
   @Patch(':id')
   async updateRecord(@Param('id') id: string, @Body() body: UpdateRoleDTO) {
-    return ResponseFactory.build(this.rolesService.update(id, body));
+    const data = await this.rolesService.update(id, body);
+    this.rolesService.$role.next(data);
+    return ResponseFactory.build(data);
   }
 
   @Delete(':id')

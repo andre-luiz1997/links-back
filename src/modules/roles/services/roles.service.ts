@@ -2,15 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { RolesEntity } from '../entities/roles.entity';
 import { Model, Types } from 'mongoose';
-import { ProvidersEnum } from 'src/constants';
+import { PERMISSIONS, ProvidersEnum } from 'src/constants';
 import { CreateRoleDTO } from '../dtos/create-role.dto';
 import { UpdateRoleDTO } from '../dtos/update-role.dto';
 import { RecordNotFoundException } from '@shared/exceptions';
 import { mapPagination, PaginationProps } from '@shared/pagination';
 import { PaginatedResult } from '@shared/response';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class RolesService {
+  $role = new BehaviorSubject<RolesEntity | undefined>(undefined);
+  
   constructor(
     @InjectModel(ProvidersEnum.ROLES) private rolesModel: Model<RolesEntity>,
   ) { }
@@ -58,5 +61,9 @@ export class RolesService {
     const record = await this.getById(id);
     if (!record) throw new RecordNotFoundException();
     return this.rolesModel.findByIdAndDelete(id);
+  }
+
+  async getPermissions() {
+    return PERMISSIONS;
   }
 }

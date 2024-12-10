@@ -1,6 +1,7 @@
 import type { IRoles } from "@modules/roles/types/roles";
 import { ApiProperty } from "@nestjs/swagger";
 import { Types, Schema } from "mongoose"
+import { IPermissions } from "src/constants";
 export class RolesEntity implements IRoles {
   @ApiProperty()
   name: string;
@@ -9,7 +10,7 @@ export class RolesEntity implements IRoles {
   })
   isDefault?: boolean;
   @ApiProperty()
-  permissions: string[];
+  permissions: IPermissions[];
   @ApiProperty()
   _id: Types.ObjectId;
   @ApiProperty()
@@ -27,7 +28,7 @@ export const RolesSchema = new Schema<RolesEntity>({
   _id: Types.ObjectId,
   name: { type: String, required: true },
   isDefault: { type: Boolean, required: false, default: false },
-  permissions: { type: [String], required: true },
+  permissions: { type: [], required: true },
 }, {
   timestamps: true,
 })

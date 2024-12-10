@@ -1,5 +1,5 @@
 import { LabsModule } from '@modules/labs/labs.module';
-import { Module } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
 import { MongooseModule, type MongooseModuleOptions } from '@nestjs/mongoose';
 import { configureDotEnv } from '@shared/functions';
 import { Providers } from '@shared/providers';
@@ -30,6 +30,9 @@ function getMongooseConfig(): { uri: string, options: MongooseModuleOptions } {
 }
 
 const mongooseConfigs = getMongooseConfig();
+
+
+
 
 @Module({
   imports: [
