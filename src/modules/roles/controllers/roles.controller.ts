@@ -2,6 +2,10 @@ import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nest
 import { RolesService } from '../services/roles.service';
 import { CreateRoleDTO } from '../dtos';
 import { UpdateRoleDTO } from '../dtos/update-role.dto';
+import { DefaultPaginatedResponse, ResponseFactory } from '@shared/response';
+import { Pagination } from '@shared/decorators';
+import { PaginationProps } from '@shared/pagination';
+import { RolesEntity } from '../entities/roles.entity';
 
 @Controller('roles')
 export class RolesController {
@@ -11,26 +15,27 @@ export class RolesController {
 
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
-    return this.rolesService.getById(id);
+    return ResponseFactory.build(await this.rolesService.getById(id))
   }
 
   @Get()
-  async getRecords() {
-    return this.rolesService.getAll();
+  async getRecords(@Pagination() pagination: PaginationProps): Promise<DefaultPaginatedResponse<RolesEntity[]>> {
+    const res = await this.rolesService.getAll(pagination);
+    return ResponseFactory.build(res);
   }
 
   @Post()
   async createRecord(@Body() body: CreateRoleDTO) {
-    return this.rolesService.create(body);
+    return ResponseFactory.build(this.rolesService.create(body));
   }
 
   @Patch(':id')
   async updateRecord(@Param('id') id: string, @Body() body: UpdateRoleDTO) {
-    return this.rolesService.update(id, body);
+    return ResponseFactory.build(this.rolesService.update(id, body));
   }
 
   @Delete(':id')
   async deleteRecord(@Param('id') id: string) {
-    return this.rolesService.delete(id);
+    return ResponseFactory.build(this.rolesService.delete(id));
   }
 }

@@ -6,7 +6,7 @@ import { ProvidersEnum } from 'src/constants';
 import { ExamTypesEntity } from '../entities/examTypes.entity';
 import { CreateExamTypeDTO, UpdateExamTypeDTO } from '../dtos';
 import { RecordNotFoundException } from '@shared/exceptions';
-import { PaginationFilter, PaginationProps } from '@shared/pagination';
+import { mapPagination, PaginationProps } from '@shared/pagination';
 
 @Injectable()
 export class ExamTypesService implements DefaultService {
@@ -23,36 +23,7 @@ export class ExamTypesService implements DefaultService {
   }
 
   async getAll(pagination?: PaginationProps) {
-    const where = {};
-    if (pagination?.filters) {
-      pagination.filters.forEach((filter: PaginationFilter) => {
-        if (filter.operator === 'LIKE') {
-          where[filter.field] = { $regex: filter.value, $options: 'i' };
-        } else if (filter.operator === 'IN') {
-          where[filter.field] = { $in: filter.value };
-        } else if (filter.operator === 'BETWEEN') {
-          where[filter.field] = { $gte: filter.value[0], $lte: filter.value[1] };
-        } else {
-          where[filter.field] = { [`$${filter.operator.toLowerCase()}`]: filter.value };
-        }
-      });
-    }
-    const query = this.examTypesModel.find();
-    if (pagination.limit) query.limit(pagination.limit);
-    if (pagination.skip) query.skip(pagination.skip);
-    if (pagination.sortBy) {
-      const sortArray = [];
-      if (Array.isArray(pagination.sortBy)) {
-        pagination.sortBy.forEach((field) => {
-          const sort = pagination.sortOrder == 1 ? 'asc' : 'desc';
-          sortArray.push([field, sort]);
-        });
-      } else {
-        const sort = pagination.sortOrder == 1 ? 'asc' : 'desc';
-        sortArray.push([pagination.sortBy, sort]);
-      }
-      query.sort(sortArray);
-    }
+    const {query, where} = mapPagination(this.examTypesModel,pagination);
 
     const records = await query.exec();
     return {

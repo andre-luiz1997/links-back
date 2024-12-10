@@ -6,6 +6,8 @@ import { ProvidersEnum } from 'src/constants';
 import { CreateRoleDTO } from '../dtos/create-role.dto';
 import { UpdateRoleDTO } from '../dtos/update-role.dto';
 import { RecordNotFoundException } from '@shared/exceptions';
+import { mapPagination, PaginationProps } from '@shared/pagination';
+import { PaginatedResult } from '@shared/response';
 
 @Injectable()
 export class RolesService {
@@ -25,8 +27,15 @@ export class RolesService {
     return this.rolesModel.findOne(where).exec();
   }
 
-  getAll(): Promise<RolesEntity[]> {
-    return this.rolesModel.find().exec();
+  async getAll(pagination?: PaginationProps): Promise<PaginatedResult<RolesEntity[]>> {
+    const {query, where} = mapPagination(this.rolesModel,pagination);
+
+    const records = await query.exec();
+    return {
+      records,
+      totalRecords: await this.rolesModel.find().countDocuments().exec(),
+      filteredRecords: await this.rolesModel.find(where).countDocuments().exec(),
+    };
   }
 
   async create(body: CreateRoleDTO): Promise<RolesEntity> {
