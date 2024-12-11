@@ -1,5 +1,5 @@
 import { UsersService } from '@modules/users/services/users.service';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SigninDTO } from '../dtos';
 import { InvalidCredentialsException } from '@shared/exceptions';
 import * as bcrypt from 'bcrypt';
@@ -61,12 +61,16 @@ export class AuthService {
   }
 
   async wsSignin(client: any) {
-    const handshake = client.handshake;
-    const authorizationHeader = handshake.headers['authorization']?.split(' ');
-    if (isEmpty(authorizationHeader)) return;
-    const bearer = authorizationHeader[1];
-    const decoded = this.jwtService.verify(bearer, { secret: JWT.secret });
-    if (isEmpty(decoded)) return;
-    return await this.usersService.getOne({ _id: new Types.ObjectId(decoded._id) });
+    try {
+      const handshake = client.handshake;
+      const authorizationHeader = handshake.headers['authorization']?.split(' ');
+      if (isEmpty(authorizationHeader)) return;
+      const bearer = authorizationHeader[1];
+      const decoded = this.jwtService.verify(bearer, { secret: JWT.secret });
+      if (isEmpty(decoded)) return;
+      return await this.usersService.getOne({ _id: new Types.ObjectId(decoded._id) });
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 }

@@ -45,16 +45,16 @@ export class UsersService {
   }
 
   async update(id: string, body: UpdateUserDTO): Promise<UsersEntity> {
-    let record = await this.getById(id);
-    if (!record) throw new RecordNotFoundException();
+    if (!await this.getById(id)) throw new RecordNotFoundException();
     if (await this.exists('email', body.email, [id])) throw new Error('user.emailExists');
-    record = new this.usersModel(body);
-    record._id = new Types.ObjectId(id);
+    const $set: any = {...body};
     if (body.password) {
-      record.passwordHash = await bcrypt.hash(body.password, 10);
+      $set.passwordHash = await bcrypt.hash(body.password, 10);
     }
-    body.password = undefined;
-    return this.usersModel.findByIdAndUpdate(id, record, { new: true }).populate('role').exec();
+    $set.password = undefined;
+    return this.usersModel.findByIdAndUpdate(id, {
+      $set,
+    }, { new: true }).populate('role').exec();
   }
 
   async delete(id: string): Promise<UsersEntity> {

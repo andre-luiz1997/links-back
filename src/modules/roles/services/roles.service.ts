@@ -49,12 +49,10 @@ export class RolesService {
   }
 
   async update(id: string, body: UpdateRoleDTO): Promise<RolesEntity> {
-    let record = await this.getById(id);
-    if (!record) throw new Error('role.notFound');
+    console.log('🚀 ~ file: roles.service.ts:52 ~ RolesService ~ update ~ body 🚀 ➡➡', body);
+    if (!await this.getById(id)) throw new Error('role.notFound');
     if (await this.exists('name', body.name, [id])) throw new Error('role.nameExists');
-    record = new this.rolesModel(body);
-    record._id = new Types.ObjectId(id);
-    return this.rolesModel.findByIdAndUpdate(id, record, { new: true });
+    return this.rolesModel.findByIdAndUpdate(id, {$set: body}, { new: true }).exec();
   }
 
   async delete(id: string): Promise<RolesEntity> {
