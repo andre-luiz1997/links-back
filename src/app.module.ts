@@ -10,6 +10,7 @@ import { ReferenceValuesModule } from '@modules/referenceValues/referenceValues.
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ExamsModule } from '@modules/exams/exams.module';
+import { UtilsModule } from '@modules/utils/utils.module';
 
 configureDotEnv();
 
@@ -43,7 +44,8 @@ const mongooseConfigs = getMongooseConfig();
     ReferenceValuesModule,
     UsersModule,
     AuthModule,
-    ExamsModule
+    ExamsModule,
+    UtilsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,7 +3,7 @@ import { RemoveNonNumeric, Trim } from "./transformers";
 
 export interface IAddress {
   street: string;
-  number: string;
+  number?: string;
   complement?: string;
   neighborhood: string;
   city: string;

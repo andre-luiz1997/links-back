@@ -6,6 +6,7 @@ import { Types, type Model } from 'mongoose';
 import { ProvidersEnum } from 'src/constants';
 import type { CreateLabDTO, UpdateLabDTO } from '../dtos';
 import type { LabsEntity } from '../entities/labs.entity';
+import { mapPagination, PaginationProps } from '@shared/pagination';
 
 @Injectable()
 export class LabsService implements DefaultService {
@@ -17,8 +18,15 @@ export class LabsService implements DefaultService {
     return this.labsModel.findById(new Types.ObjectId(id)).exec();
   }
 
-  getAll(): Promise<LabsEntity[]> {
-    return this.labsModel.find().exec();
+  async getAll(pagination: PaginationProps) {
+    const {query, where} = mapPagination(this.labsModel,pagination);
+
+    const records = await query.exec();
+    return {
+      records,
+      totalRecords: await this.labsModel.find().countDocuments().exec(),
+      filteredRecords: await this.labsModel.find(where).countDocuments().exec(),
+    };
   }
 
   create(body: CreateLabDTO): Promise<LabsEntity> {

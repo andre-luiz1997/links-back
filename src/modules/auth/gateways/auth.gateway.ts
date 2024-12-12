@@ -6,33 +6,37 @@ import { isEmpty } from "class-validator";
 import { compareIds } from "@shared/functions";
 
 @WebSocketGateway({
-	cors: {
-		origin: '*',
-	},
-	path: '/auth',
+  cors: {
+    origin: '*',
+  },
+  path: '/auth',
 })
 export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     @Inject(RolesService) private rolesService: RolesService,
     @Inject(AuthService) private authService: AuthService,
-  ) {}
+  ) { }
 
   private async authenticate(client: any) {
-    const userData = await this.authService.wsSignin(client);
-    if(isEmpty(userData)) return;
-    client.userData = userData;
+    try {
+      const userData = await this.authService.wsSignin(client);
+      if (isEmpty(userData)) return;
+      client.userData = userData;
 
-    client.subscriptions ??= [];
+      client.subscriptions ??= [];
 
-    const roleSub = this.rolesService.$role.subscribe((role) => {
-      if(isEmpty(role)) return;
-      const roleId = typeof userData.role === 'string' ? userData.role : userData.role?._id;
-      if(!compareIds(role?._id, roleId)) return;
-      client.userData.role = role;
-      client.emit('role', role);
-    });
-    client.subscriptions.push(roleSub);
+      const roleSub = this.rolesService.$role.subscribe((role) => {
+        if (isEmpty(role)) return;
+        const roleId = typeof userData.role === 'string' ? userData.role : userData.role?._id;
+        if (!compareIds(role?._id, roleId)) return;
+        client.userData.role = role;
+        client.emit('role', role);
+      });
+      client.subscriptions.push(roleSub);
+    } catch (error) {
+
+    }
   }
 
   handleConnection(client: any) {
