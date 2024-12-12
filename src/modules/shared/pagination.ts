@@ -1,6 +1,6 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
-export type FilterOperators = 'LIKE' | 'NOT LIKE' |
+export type FilterOperators = 'LIKE' | 'LIKE_ID' | 'NOT LIKE' |
   'GREATER THAN' | 'GREATER THAN OR EQUAL' |
   'LESS THAN' | 'LESS THAN OR EQUAL' |
   'IN' | 'NOT IN' |
@@ -27,7 +27,9 @@ export function mapPagination(model: Model<any>, pagination?: PaginationProps) {
   const where = {};
   if (pagination?.filters) {
     pagination.filters.forEach((filter: PaginationFilter) => {
-      if (filter.operator === 'LIKE') {
+      if(filter.operator === 'LIKE_ID' && typeof filter.value === 'string') {
+        where[filter.field] = new Types.ObjectId(filter.value);
+      } else if (filter.operator === 'LIKE') {
         where[filter.field] = { $regex: filter.value, $options: 'i' };
       } else if (filter.operator === 'IN') {
         where[filter.field] = { $in: filter.value };
@@ -38,7 +40,7 @@ export function mapPagination(model: Model<any>, pagination?: PaginationProps) {
       }
     });
   }
-  const query = model.find();
+  const query = model.find().where(where);
   if (pagination?.limit) query.limit(pagination.limit);
   if (pagination?.skip) query.skip(pagination.skip);
   if (pagination?.sortBy) {

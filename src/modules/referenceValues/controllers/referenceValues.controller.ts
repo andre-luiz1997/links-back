@@ -1,8 +1,11 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
 import { ReferenceValuesService } from '../services/referenceValues.service';
 import { CreateReferenceValuesDTO, UpdateReferenceValuesDTO } from '../dtos';
+import { Pagination } from '@shared/decorators';
+import { PaginationProps } from '@shared/pagination';
+import { ResponseFactory } from '@shared/response';
 
-@Controller('referenceValues')
+@Controller('reference-values')
 export class ReferenceValuesController {
   constructor(
     @Inject(ReferenceValuesService) private referenceValuesService: ReferenceValuesService,
@@ -14,8 +17,9 @@ export class ReferenceValuesController {
   }
 
   @Get()
-  async getRecords() {
-    return this.referenceValuesService.getAll();
+  async getRecords(@Pagination() pagination: PaginationProps) {
+    if(pagination.filters && typeof pagination.filters === 'string') pagination.filters = JSON.parse(pagination.filters);
+    return ResponseFactory.build(await this.referenceValuesService.getAll(pagination));
   }
 
   @Post()

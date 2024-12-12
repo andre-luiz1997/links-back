@@ -6,6 +6,7 @@ import { ReferenceValuesEntity } from '../entities/referenceValues.entity';
 import { CreateReferenceValuesDTO, UpdateReferenceValuesDTO } from '../dtos';
 import { RecordNotFoundException } from '@shared/exceptions';
 import { ExamTypesService } from '@modules/examTypes/services/examTypes.service';
+import { mapPagination, PaginationProps } from '@shared/pagination';
 
 @Injectable()
 export class ReferenceValuesService {
@@ -18,8 +19,15 @@ export class ReferenceValuesService {
     return this.referenceValuesModel.findById(new Types.ObjectId(id)).exec();
   }
 
-  getAll(): Promise<ReferenceValuesEntity[]> {
-    return this.referenceValuesModel.find().exec();
+  async getAll(pagination: PaginationProps) {
+    const {query, where} = mapPagination(this.referenceValuesModel,pagination);
+
+    const records = await query.exec();
+    return {
+      records,
+      totalRecords: await this.referenceValuesModel.find().countDocuments().exec(),
+      filteredRecords: await this.referenceValuesModel.find(where).countDocuments().exec(),
+    };
   }
 
   async create(body: CreateReferenceValuesDTO): Promise<ReferenceValuesEntity> {
