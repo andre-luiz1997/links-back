@@ -8,6 +8,7 @@ import { ExamsEntity } from '../entities/exams.entity';
 import { UsersService } from '@modules/users/services/users.service';
 import { LabsService } from '@modules/labs/services/labs.service';
 import { ExamTypesService } from '@modules/examTypes/services/examTypes.service';
+import { mapPagination, PaginationProps } from '@shared/pagination';
 
 @Injectable()
 export class ExamsService {
@@ -19,11 +20,18 @@ export class ExamsService {
   ) { }
 
   getById(id: string): Promise<ExamsEntity> {
-    return this.examsModel.findById(new Types.ObjectId(id)).populate('user').populate('lab').exec();
+    return this.examsModel.findById(new Types.ObjectId(id)).populate('user').populate('lab').populate('results.examType').exec();
   }
 
-  getAll(): Promise<ExamsEntity[]> {
-    return this.examsModel.find().exec();
+  async getAll(pagination?: PaginationProps) {
+    const {query, where} = mapPagination(this.examsModel,pagination,'lab');
+
+    const records = await query.exec();
+    return {
+      records,
+      totalRecords: await this.examsModel.find().countDocuments().exec(),
+      filteredRecords: await this.examsModel.find(where).countDocuments().exec(),
+    };
   }
 
   async create(body: CreateExamDTO): Promise<ExamsEntity> {

@@ -5,9 +5,6 @@ import { Type } from "class-transformer";
 import { ResultEntryDTO } from "./result-entry.dto";
 
 export class CreateExamDTO implements Omit<IExams, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'user' | 'examType' | 'lab' | 'results'> {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   user: string;
   @ApiProperty()
   @IsDateString()
