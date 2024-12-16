@@ -1,8 +1,9 @@
 import { ExamTypesEntity } from "@modules/examTypes/entities/examTypes.entity";
-import type { IReferenceValues } from "@modules/referenceValues/types/referenceValues";
+import type { IFastingValues, IReferenceValues } from "@modules/referenceValues/types/referenceValues";
 import { ApiProperty } from "@nestjs/swagger";
 import { Schema, Types } from "mongoose";
 import { ProvidersEnum } from "src/constants";
+import { FastingValuesDTO } from "../dtos";
 
 export class ReferenceValuesEntity implements IReferenceValues {
   @ApiProperty()
@@ -19,10 +20,14 @@ export class ReferenceValuesEntity implements IReferenceValues {
   ageRange?: string;
   @ApiProperty({
     required: false,
-    type: String,
-    examples: ['Com jejum', 'Sem jejum']
+    type: FastingValuesDTO
   })
-  fastingState?: string;
+  fastingValues?: IFastingValues;
+  @ApiProperty({
+    required: false,
+    type: FastingValuesDTO
+  })
+  nonFastingValues?: IFastingValues;
   @ApiProperty({
     required: false,
     type: String,
@@ -55,11 +60,18 @@ export class ReferenceValuesEntity implements IReferenceValues {
   })
   deletedAt?: Date;
 }
+
+export const FastingValuesSchema = new Schema<IFastingValues>({
+  minValue: { type: Number, required: false },
+  maxValue: { type: Number, required: false }
+}, { _id: false })
+
 export const ReferenceValuesSchema = new Schema<ReferenceValuesEntity>({
   _id: Types.ObjectId,
   examType: { type: Schema.Types.ObjectId, ref: ProvidersEnum.EXAMTYPES, required: true },
   ageRange: { type: String, required: false },
-  fastingState: { type: String, required: false },
+  fastingValues: { type: FastingValuesSchema, required: false },
+  nonFastingValues: { type: FastingValuesSchema, required: false },
   category: { type: String, required: false },
   minValue: { type: Number, required: false },
   maxValue: { type: Number, required: false },

@@ -23,7 +23,7 @@ export interface PaginationProps {
   filters?: PaginationFilter[];
 }
 
-export function mapPagination(model: Model<any>, pagination?: PaginationProps) {
+export function mapPagination(model: Model<any>, pagination?: PaginationProps, populate?: any) {
   const where = {};
   if (pagination?.filters) {
     pagination.filters.forEach((filter: PaginationFilter) => {
@@ -40,7 +40,7 @@ export function mapPagination(model: Model<any>, pagination?: PaginationProps) {
       }
     });
   }
-  const query = model.find().where(where);
+  const query = model.find().populate(populate).where(where);
   if (pagination?.limit) query.limit(pagination.limit);
   if (pagination?.skip) query.skip(pagination.skip);
   if (pagination?.sortBy) {

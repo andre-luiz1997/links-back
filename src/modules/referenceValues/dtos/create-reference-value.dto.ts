@@ -1,6 +1,18 @@
-import { IReferenceValues } from "../types/referenceValues";
+import { IFastingValues, IReferenceValues } from "../types/referenceValues";
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+
+export class FastingValuesDTO {
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  minValue?: number;
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  maxValue?: number;
+}
 
 export class CreateReferenceValuesDTO implements Omit<IReferenceValues, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'examType'> {
   @IsString()
@@ -11,22 +23,18 @@ export class CreateReferenceValuesDTO implements Omit<IReferenceValues, '_id' | 
   @IsOptional()
   @ApiProperty()
   ageRange?: string;
-  @IsString()
+  @Type(() => FastingValuesDTO)
   @IsOptional()
   @ApiProperty()
-  fastingState?: string;
+  fastingValues?: IFastingValues;
+  @Type(() => FastingValuesDTO)
+  @IsOptional()
+  @ApiProperty()
+  nonFastingValues?: IFastingValues;
   @IsString()
   @IsOptional()
   @ApiProperty()
   category?: string;
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  minValue?: number;
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty()
-  maxValue?: number;
   @IsString()
   @IsOptional()
   @ApiProperty()

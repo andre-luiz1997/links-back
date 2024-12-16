@@ -16,12 +16,11 @@ export class ReferenceValuesService {
   ) { }
 
   getById(id: string): Promise<ReferenceValuesEntity> {
-    return this.referenceValuesModel.findById(new Types.ObjectId(id)).exec();
+    return this.referenceValuesModel.findById(new Types.ObjectId(id)).populate('examType').exec();
   }
 
   async getAll(pagination: PaginationProps) {
-    const {query, where} = mapPagination(this.referenceValuesModel,pagination);
-
+    const {query, where} = mapPagination(this.referenceValuesModel,pagination, 'examType');
     const records = await query.exec();
     return {
       records,

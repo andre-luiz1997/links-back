@@ -13,7 +13,7 @@ export class ReferenceValuesController {
 
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
-    return this.referenceValuesService.getById(id);
+    return ResponseFactory.build(await this.referenceValuesService.getById(id));
   }
 
   @Get()
@@ -24,16 +24,16 @@ export class ReferenceValuesController {
 
   @Post()
   async createRecord(@Body() body: CreateReferenceValuesDTO) {
-    return this.referenceValuesService.create(body);
+    return ResponseFactory.build(await this.referenceValuesService.create(body));
   }
 
   @Patch(':id')
   async updateRecord(@Param('id') id: string, @Body() body: UpdateReferenceValuesDTO) {
-    return this.referenceValuesService.update(id, body);
+    return ResponseFactory.build(await this.referenceValuesService.update(id, body));
   }
 
   @Delete(':id')
   async deleteRecord(@Param('id') id: string) {
-    return this.referenceValuesService.delete(id);
+    return ResponseFactory.build(await this.referenceValuesService.delete(id));
   }
 }
