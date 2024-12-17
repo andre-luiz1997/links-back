@@ -13,6 +13,16 @@ export class ExamTypesEntity implements IExamTypes {
     example: 'mg/dl'
   })
   unit?: string;
+  @ApiProperty({
+    description: 'Material of the exam.',
+    example: 'Blood'
+  })
+  material?: string;
+  @ApiProperty({
+    description: 'Method of the exam.',
+    example: 'ELISA'
+  })
+  method?: string;
   @ApiProperty()
   createdAt: Date;
   @ApiProperty({
@@ -30,6 +40,8 @@ export const ExamTypesSchema = new Schema<ExamTypesEntity>({
   name: { type: String, required: true },
   description: { type: String, required: false },
   unit: { type: String, required: false },
+  material: { type: String, required: false },
+  method: { type: String, required: false },
 }, {
   timestamps: true,
 })

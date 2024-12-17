@@ -19,4 +19,14 @@ export class CreateExamTypeDTO implements Omit<IExamTypes, '_id' | 'createdAt' |
   @IsOptional()
   @Trim()
   unit?: string;
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @Trim()
+  material?: string;
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @Trim()
+  method?: string;
 }
