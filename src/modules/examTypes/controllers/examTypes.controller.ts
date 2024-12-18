@@ -10,7 +10,7 @@ import { ExamTypesEntity } from '../entities/examTypes.entity';
 export class ExamTypesController {
   constructor(
     @Inject(ExamTypesService) private examTypesService: ExamTypesService,
-  ) {}
+  ) { }
 
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
@@ -24,11 +24,13 @@ export class ExamTypesController {
 
   @Post()
   async createRecord(@Body() body: CreateExamTypeDTO) {
+    console.log('🚀 ~ file: examTypes.controller.ts:27 ~ ExamTypesController ~ createRecord ~ body 🚀 ➡➡', body);
     return ResponseFactory.build(await this.examTypesService.create(body));
   }
 
   @Patch(':id')
   async updateRecord(@Param('id') id: string, @Body() body: UpdateExamTypeDTO) {
+    console.log('🚀 ~ file: examTypes.controller.ts:33 ~ ExamTypesController ~ updateRecord ~ body 🚀 ➡➡', body);
     return ResponseFactory.build(await this.examTypesService.update(id, body));
   }
 

@@ -20,7 +20,16 @@ export class ReferenceValuesService {
   }
 
   async getAll(pagination: PaginationProps) {
-    const {query, where} = mapPagination(this.referenceValuesModel,pagination, 'examType');
+    const {query, where} = mapPagination(this.referenceValuesModel,pagination, [
+      {
+        $lookup: {
+          from: ProvidersEnum.EXAMTYPES,
+          localField: 'examType',
+          foreignField: '_id',
+          as: 'examType'
+        }
+      }
+    ]);
     const records = await query.exec();
     return {
       records,

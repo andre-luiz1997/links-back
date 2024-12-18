@@ -21,6 +21,9 @@ export const Pagination = createParamDecorator<PaginationProps>((data, ctx: Exec
       // @ts-ignore
       filters: queryParams.filters ?? undefined,
     }
+    if(typeof paginationProps.filters == 'string') {
+      paginationProps.filters = JSON.parse(paginationProps.filters);
+    }
   }
   return paginationProps;
 })

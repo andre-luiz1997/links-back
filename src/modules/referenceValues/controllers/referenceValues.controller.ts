@@ -9,7 +9,7 @@ import { ResponseFactory } from '@shared/response';
 export class ReferenceValuesController {
   constructor(
     @Inject(ReferenceValuesService) private referenceValuesService: ReferenceValuesService,
-  ) {}
+  ) { }
 
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
@@ -18,7 +18,6 @@ export class ReferenceValuesController {
 
   @Get()
   async getRecords(@Pagination() pagination: PaginationProps) {
-    if(pagination.filters && typeof pagination.filters === 'string') pagination.filters = JSON.parse(pagination.filters);
     return ResponseFactory.build(await this.referenceValuesService.getAll(pagination));
   }
 

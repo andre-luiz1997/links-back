@@ -1,7 +1,30 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IExamTypes } from "../types/examTypes";
+import { IExamTypes, IExamTypesGroup } from "../types/examTypes";
 import { Trim } from "@shared/transformers";
-import { IsString, IsNotEmpty, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { Types } from "mongoose";
+
+export class ExamTypesGroupDTO implements Omit<IExamTypesGroup,'examTypes'> {
+  @ApiProperty({
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateExamTypeDTO)
+  examTypes: IExamTypes[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  parentGroups?: Types.ObjectId[];
+}
 
 export class CreateExamTypeDTO implements Omit<IExamTypes, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
   @ApiProperty()
@@ -9,24 +32,42 @@ export class CreateExamTypeDTO implements Omit<IExamTypes, '_id' | 'createdAt' |
   @IsNotEmpty()
   @Trim()
   name: string;
-  @ApiProperty()
+  
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   @Trim()
   description?: string;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   @Trim()
   unit?: string;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   @Trim()
   material?: string;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   @Trim()
   method?: string;
+
+  @ApiProperty({
+    required: false
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ExamTypesGroupDTO)
+  examTypesGroups?: IExamTypesGroup[];
 }

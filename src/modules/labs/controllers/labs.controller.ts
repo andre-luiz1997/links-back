@@ -10,7 +10,7 @@ import { LabsEntity } from '../entities/labs.entity';
 export class LabsController {
   constructor(
     @Inject(LabsService) private labsService: LabsService,
-  ) {}
+  ) { }
 
   @Get(':id')
   async getRecordById(@Param('id') id: string) {

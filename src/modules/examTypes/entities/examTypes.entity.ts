@@ -1,6 +1,7 @@
-import type { IExamTypes } from "@modules/examTypes/types/examTypes";
+import type { IExamTypes, IExamTypesGroup } from "@modules/examTypes/types/examTypes";
 import { ApiProperty } from "@nestjs/swagger";
 import { Schema, Types } from "mongoose";
+import { ProvidersEnum } from "src/constants";
 export class ExamTypesEntity implements IExamTypes {
   @ApiProperty()
   _id: Types.ObjectId;
@@ -23,6 +24,17 @@ export class ExamTypesEntity implements IExamTypes {
     example: 'ELISA'
   })
   method?: string;
+
+  @ApiProperty({
+    description: 'Group of exams derived of the main examType',
+  })
+  examTypesGroups?: IExamTypesGroup[];
+
+  @ApiProperty({
+    required: false
+  })
+  parentGroups?: Types.ObjectId[];
+
   @ApiProperty()
   createdAt: Date;
   @ApiProperty({
@@ -35,6 +47,11 @@ export class ExamTypesEntity implements IExamTypes {
   deletedAt?: Date;
 }
 
+export const ExamTypesGroupSchema = new Schema<IExamTypesGroup>({
+  name: { type: String, required: true },
+  examTypes: [{ type: Schema.Types.ObjectId, ref: ProvidersEnum.EXAMTYPES }]
+}, { _id: false });
+
 export const ExamTypesSchema = new Schema<ExamTypesEntity>({
   _id: Types.ObjectId,
   name: { type: String, required: true },
@@ -42,6 +59,8 @@ export const ExamTypesSchema = new Schema<ExamTypesEntity>({
   unit: { type: String, required: false },
   material: { type: String, required: false },
   method: { type: String, required: false },
+  examTypesGroups: { type: [ExamTypesGroupSchema], required: false },
+  parentGroups: {type: [Types.ObjectId], required: false}
 }, {
   timestamps: true,
 })

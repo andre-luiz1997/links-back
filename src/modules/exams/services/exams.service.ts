@@ -24,7 +24,16 @@ export class ExamsService {
   }
 
   async getAll(pagination?: PaginationProps) {
-    const {query, where} = mapPagination(this.examsModel,pagination,'lab');
+    const {query, where} = mapPagination(this.examsModel,pagination,[
+      {
+        $lookup: {
+          from: ProvidersEnum.LABS,
+          localField: 'lab',
+          foreignField: '_id',
+          as: 'lab'
+        }
+      }
+    ]);
 
     const records = await query.exec();
     return {
