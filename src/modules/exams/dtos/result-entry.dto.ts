@@ -1,30 +1,48 @@
 import { IResultEntry } from "../types";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 
-export class ResultEntryDTO implements Omit<IResultEntry, 'examType'> {
+
+export class ResultEntryDTO implements Omit<IResultEntry, 'examType' | 'entryGroups'> {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   examType: string;
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   value: number;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   unit?: string;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   observations?: string;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   method?: string;
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   material?: string;
+  @ApiProperty({
+    required: false
+  })
+  @IsOptional()
+  @IsArray()
+  @Type(() => ResultEntryDTO)
+  @ValidateNested({ each: true })
+  entryGroups?: ResultEntryDTO[];
 }

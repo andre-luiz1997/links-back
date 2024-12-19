@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { DefaultService } from '@shared/types';
-import { Model, Types } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { ProvidersEnum } from 'src/constants';
 import { ExamTypesEntity } from '../entities/examTypes.entity';
 import { CreateExamTypeDTO, UpdateExamTypeDTO } from '../dtos';
@@ -21,7 +21,12 @@ export class ExamTypesService implements DefaultService {
   }
 
   getById(id: string): Promise<ExamTypesEntity> {
-    return this.examTypesModel.findById(new Types.ObjectId(id)).exec();
+    return this.examTypesModel.findById(new Types.ObjectId(id)).populate({
+      path: 'examTypesGroups',
+      populate: {
+        path: 'examTypes'
+      }
+    }).exec();
   }
 
   private async prepareExamTypesGroups(examTypesGroups: IExamTypesGroup[], parentId?: string): Promise<IExamTypesGroup[]> {
@@ -29,6 +34,7 @@ export class ExamTypesService implements DefaultService {
 
     return Promise.all(examTypesGroups.map(async group => {
       return {
+        _id: group._id ?? new Types.ObjectId(),
         name: group.name,
         examTypes: await Promise.all(group.examTypes?.map(async _examType => {
           let examType: IExamTypes;
@@ -39,11 +45,13 @@ export class ExamTypesService implements DefaultService {
           }
           if (!examType) {
             _examType.parentGroups ??= [];
-            if (parentId) _examType.parentGroups.push(new Types.ObjectId(parentId));
+            if (parentId && !_examType.parentGroups.includes(new Types.ObjectId(parentId))) _examType.parentGroups.push(new Types.ObjectId(parentId));
             examType = await this.create(_examType);
           } else if (parentId) {
             examType.parentGroups ??= [];
-            examType.parentGroups.push(new Types.ObjectId(parentId));
+            if (!examType.parentGroups.includes(new Types.ObjectId(parentId))) {
+              examType.parentGroups.push(new Types.ObjectId(parentId));
+            }
             examType = await this.update(examType._id.toString(), examType);
           }
           return examType;
@@ -52,14 +60,56 @@ export class ExamTypesService implements DefaultService {
     }))
   }
 
-  async getAll(pagination?: PaginationProps) {
-    const { query, where } = mapPagination(this.examTypesModel, pagination);
+  private getExamTypesGroupsPopulate(): PipelineStage[] {
+    return [{
+      $lookup: {
+        from: "examtypes",
+        localField: "examTypesGroups.examTypes",
+        foreignField: "_id",
+        as: "resolvedExamTypes"
+      }
+    },
+    {
+      $addFields: {
+        examTypesGroups: {
+          $map: {
+            input: "$examTypesGroups",
+            as: "group",
+            in: {
+              _id: "$$group._id",
+              name: "$$group.name",
+              examTypes: {
+                $filter: {
+                  input: "$resolvedExamTypes",
+                  as: "examType",
+                  cond: {
+                    $in: [
+                      "$$examType._id",
+                      "$$group.examTypes"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        resolvedExamTypes: 0
+      }
+    }]
+  }
 
+  async getAll(pagination?: PaginationProps) {
+    const { query, $and } = mapPagination(this.examTypesModel, { pagination, populate: this.getExamTypesGroupsPopulate() });
     const records = await query.exec();
     return {
       records,
-      totalRecords: await this.examTypesModel.find().countDocuments().exec(),
-      filteredRecords: await this.examTypesModel.find(where).countDocuments().exec(),
+      totalRecords: (await this.examTypesModel.aggregate([...$and, {
+        $count: "total"
+      }]).exec())[0]?.total ?? 0
     };
   }
 

@@ -2,6 +2,7 @@ import type { DBEntity } from "@modules/shared/types";
 import { Types } from "mongoose";
 
 export interface IExamTypesGroup {
+  _id: Types.ObjectId;
   /**
    * Name of the group of exams.
    */

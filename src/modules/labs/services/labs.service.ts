@@ -19,13 +19,14 @@ export class LabsService implements DefaultService {
   }
 
   async getAll(pagination: PaginationProps) {
-    const {query, where} = mapPagination(this.labsModel,pagination);
+    const {query, $and} = mapPagination(this.labsModel,{pagination});
 
     const records = await query.exec();
     return {
       records,
-      totalRecords: await this.labsModel.find().countDocuments().exec(),
-      filteredRecords: await this.labsModel.find(where).countDocuments().exec(),
+      totalRecords: await this.labsModel.aggregate([...$and, {
+        $count: "total"
+      }]).exec()[0]?.total,
     };
   }
 

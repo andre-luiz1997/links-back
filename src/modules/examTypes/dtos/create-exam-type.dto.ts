@@ -2,10 +2,17 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IExamTypes, IExamTypesGroup } from "../types/examTypes";
 import { Trim } from "@shared/transformers";
 import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested } from "class-validator";
-import { Type } from "class-transformer";
 import { Types } from "mongoose";
+import { Type } from "class-transformer";
 
 export class ExamTypesGroupDTO implements Omit<IExamTypesGroup,'examTypes'> {
+  @ApiProperty({
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  _id: Types.ObjectId;
+
   @ApiProperty({
     required: false
   })

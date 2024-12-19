@@ -29,15 +29,21 @@ export class ResultEntry implements IResultEntry {
     required: false
   })
   material?: string;
+  @ApiProperty({
+    required: false,
+    type: () => ResultEntry
+  })
+  entryGroups?: ResultEntry[];
 }
 
-export const ResultEntrySchema = new Schema<ResultEntry>({
+export const ResultEntrySchema = new Schema<ResultEntry>({});
+
+ResultEntrySchema.add({
   examType: { type: Types.ObjectId, ref: ProvidersEnum.EXAMTYPES, required: true },
   value: { type: Number, required: true },
   unit: { type: String, required: false },
   observations: { type: String, required: false },
   method: { type: String, required: false },
   material: { type: String, required: false },
-}, {
-  _id: false
-});
+  entryGroups: {type: [ResultEntrySchema], required: false}
+})

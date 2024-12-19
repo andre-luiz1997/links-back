@@ -47,10 +47,19 @@ export class ExamTypesEntity implements IExamTypes {
   deletedAt?: Date;
 }
 
-export const ExamTypesGroupSchema = new Schema<IExamTypesGroup>({
+export class ExamTypesGroupEntity implements IExamTypesGroup {
+  @ApiProperty()
+  _id: Types.ObjectId;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  examTypes: ExamTypesEntity[];
+}
+
+export const ExamTypesGroupSchema = new Schema<ExamTypesGroupEntity>({
   name: { type: String, required: true },
   examTypes: [{ type: Schema.Types.ObjectId, ref: ProvidersEnum.EXAMTYPES }]
-}, { _id: false });
+}, { _id: true });
 
 export const ExamTypesSchema = new Schema<ExamTypesEntity>({
   _id: Types.ObjectId,
@@ -59,8 +68,8 @@ export const ExamTypesSchema = new Schema<ExamTypesEntity>({
   unit: { type: String, required: false },
   material: { type: String, required: false },
   method: { type: String, required: false },
-  examTypesGroups: { type: [ExamTypesGroupSchema], required: false },
-  parentGroups: {type: [Types.ObjectId], required: false}
+  examTypesGroups: [{ type: ExamTypesGroupSchema, required: false }],
+  parentGroups: [{type: Types.ObjectId, required: false}]
 }, {
   timestamps: true,
 })

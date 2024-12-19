@@ -20,21 +20,28 @@ export class ReferenceValuesService {
   }
 
   async getAll(pagination: PaginationProps) {
-    const {query, where} = mapPagination(this.referenceValuesModel,pagination, [
-      {
-        $lookup: {
-          from: ProvidersEnum.EXAMTYPES,
-          localField: 'examType',
-          foreignField: '_id',
-          as: 'examType'
+    const { query, $and } = mapPagination(this.referenceValuesModel, {
+      pagination, populate: [
+        {
+          $lookup: {
+            from: ProvidersEnum.EXAMTYPES.toLowerCase(),
+            localField: 'examType',
+            foreignField: '_id',
+            as: 'examType'
+          }
+        },
+        {
+          $unwind: {path: '$examType', preserveNullAndEmptyArrays: true},
+          
         }
-      }
-    ]);
+      ]
+    });
     const records = await query.exec();
     return {
       records,
-      totalRecords: await this.referenceValuesModel.find().countDocuments().exec(),
-      filteredRecords: await this.referenceValuesModel.find(where).countDocuments().exec(),
+      totalRecords: await this.referenceValuesModel.aggregate([...$and, {
+        $count: "total"
+      }]).exec()[0]?.total
     };
   }
 

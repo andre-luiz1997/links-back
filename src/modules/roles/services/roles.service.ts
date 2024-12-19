@@ -31,13 +31,14 @@ export class RolesService {
   }
 
   async getAll(pagination?: PaginationProps): Promise<PaginatedResult<RolesEntity[]>> {
-    const {query, where} = mapPagination(this.rolesModel,pagination);
+    const {query, $and} = mapPagination(this.rolesModel,{pagination});
 
     const records = await query.exec();
     return {
       records,
-      totalRecords: await this.rolesModel.find().countDocuments().exec(),
-      filteredRecords: await this.rolesModel.find(where).countDocuments().exec(),
+      totalRecords: (await this.rolesModel.aggregate([...$and, {
+        $count: "total"
+      }]).exec())[0]?.total
     };
   }
 

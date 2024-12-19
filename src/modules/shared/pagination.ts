@@ -23,7 +23,8 @@ export interface PaginationProps {
   filters?: PaginationFilter[];
 }
 
-export function mapPagination(model: Model<any>, pagination?: PaginationProps, populate?: PipelineStage.Lookup[]) {
+export function mapPagination(model: Model<any>, options?: {pagination?: PaginationProps, populate?: PipelineStage[]}) {
+  const {pagination, populate} = options;
   const where = {};
   const $and = [];
   if (pagination?.filters) {
@@ -55,9 +56,7 @@ export function mapPagination(model: Model<any>, pagination?: PaginationProps, p
   });
   if (populate) $and.push(...populate);
   if (!$and.length) $and.push({ $match: {} });
-  const query = model.aggregate($and);
-  if (pagination?.limit) query.limit(pagination.limit);
-  if (pagination?.skip) query.skip(pagination.skip);
+  const limits = [];
   if (pagination?.sortBy) {
     const sortArray = [];
     if (Array.isArray(pagination.sortBy)) {
@@ -70,10 +69,14 @@ export function mapPagination(model: Model<any>, pagination?: PaginationProps, p
       sortArray.push([pagination.sortBy, sort]);
     }
     sortArray.forEach(([key, value]) => {
-      query.sort({
-        [key]: value
-      });
+      let sort = value;
+      if(value === 'asc') sort = 1;
+      else if(value === 'desc') sort = -1;
+      limits.push({ $sort: { [key]: sort } });
     })
   }
-  return { query, where };
+  if (pagination?.skip) limits.push({ $skip: pagination.skip });
+  if (pagination?.limit) limits.push({ $limit: pagination.limit });
+  const query = model.aggregate([...$and, ...limits]);
+  return { query, $and };
 }

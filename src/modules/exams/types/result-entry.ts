@@ -13,4 +13,5 @@ export interface IResultEntry {
    * @example  Sangue
    */
   material?: string;
+  entryGroups?: IResultEntry[];
 }
