@@ -6,6 +6,10 @@ import { ExamTypesEntity } from "@modules/examTypes/entities/examTypes.entity";
 
 export class ResultEntry implements IResultEntry {
   @ApiProperty({
+    type: () => Types.ObjectId
+  })
+  _id: Types.ObjectId;
+  @ApiProperty({
     type: () => ExamTypesEntity
   })
   examType: ExamTypesEntity;

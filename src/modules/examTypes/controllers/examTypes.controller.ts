@@ -19,6 +19,7 @@ export class ExamTypesController {
 
   @Get()
   async getRecords(@Pagination() pagination: PaginationProps): Promise<DefaultPaginatedResponse<ExamTypesEntity>> {
+    console.log('🚀 ~ file: examTypes.controller.ts:22 ~ ExamTypesController ~ getRecords ~ pagination 🚀 ➡➡', pagination);
     try {
       return ResponseFactory.build(await this.examTypesService.getAll(pagination));
     } catch (error) {

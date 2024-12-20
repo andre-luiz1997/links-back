@@ -9,7 +9,7 @@ export type FilterOperators = 'LIKE' | 'LIKE_ID' | 'NOT LIKE' |
 
 export interface PaginationFilter {
   field: string;
-  value: string | string[] | number | number[] | Date | Date[];
+  value?: string | string[] | number | number[] | Date | Date[];
   operator: FilterOperators;
 }
 
@@ -23,15 +23,15 @@ export interface PaginationProps {
   filters?: PaginationFilter[];
 }
 
-export function mapPagination(model: Model<any>, options?: {pagination?: PaginationProps, populate?: PipelineStage[]}) {
-  const {pagination, populate} = options;
+export function mapPagination(model: Model<any>, options?: { pagination?: PaginationProps, populate?: PipelineStage[] }) {
+  const { pagination, populate } = options;
   const where = {};
   const $and = [];
   if (pagination?.filters) {
     pagination.filters.forEach((filter: PaginationFilter) => {
       if (filter.operator === 'LIKE_ID' && typeof filter.value === 'string') {
         where[filter.field] = new Types.ObjectId(filter.value);
-      } else if (filter.operator === 'LIKE') {
+      } else if (filter.operator === 'LIKE' || filter.operator === '%%') {
         where[filter.field] = { $regex: filter.value, $options: 'i' };
       } else if (filter.operator === 'IN') {
         where[filter.field] = { $in: filter.value };
@@ -70,8 +70,8 @@ export function mapPagination(model: Model<any>, options?: {pagination?: Paginat
     }
     sortArray.forEach(([key, value]) => {
       let sort = value;
-      if(value === 'asc') sort = 1;
-      else if(value === 'desc') sort = -1;
+      if (value === 'asc') sort = 1;
+      else if (value === 'desc') sort = -1;
       limits.push({ $sort: { [key]: sort } });
     })
   }

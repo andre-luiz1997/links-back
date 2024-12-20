@@ -12,6 +12,7 @@ import { mapPagination, PaginationProps } from '@shared/pagination';
 import { compareIds } from '@shared/functions';
 import { ResultEntry } from '../entities';
 import { ExamTypesEntity } from '@modules/examTypes/entities/examTypes.entity';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class ExamsService {
@@ -22,25 +23,70 @@ export class ExamsService {
     @Inject(ExamTypesService) private examTypesService: ExamTypesService,
   ) { }
 
-  getById(id: string): Promise<ExamsEntity> {
-    return this.examsModel.findById(new Types.ObjectId(id)).populate('user').populate('lab').populate('results.examType').exec();
+  private mapExamResults(examTypes: ExamTypesEntity[], resultEntries: ResultEntry[]) {
+    if (!resultEntries?.length) return;
+    return resultEntries.map(resultEntry => {
+      const examType = examTypes.find(type => compareIds(type._id, resultEntry.examType as unknown as Types.ObjectId));
+      const entryGroups = resultEntry.entryGroups?.map(entryGroup => {
+        const examTypeGroup = examType.examTypesGroups.find(type => compareIds(type._id, entryGroup.examType as unknown as Types.ObjectId))
+        return {
+          _id: entryGroup._id,
+          examType: examTypeGroup,
+          value: entryGroup.value,
+          entryGroups: entryGroup.entryGroups?.filter(entryGroup => !isEmpty(entryGroup.value))?.map(entryGroupInner => {
+            const examTypeEntryGroup = examTypeGroup.examTypes.find(type => compareIds(type._id, entryGroupInner.examType as unknown as Types.ObjectId))
+            return {
+              examType: examTypeEntryGroup,
+              value: entryGroupInner.value,
+              _id: entryGroupInner._id,
+            } as ResultEntry
+          })
+        } as ResultEntry
+      });
+      return { 
+        _id: resultEntry._id,
+        examType,
+        entryGroups,
+        value: resultEntry.value,
+        material: resultEntry.material,
+        method: resultEntry.method,
+        observations: resultEntry.observations,
+        unit: resultEntry.unit,
+       } as ResultEntry;
+    });
+  }
+
+  async getById(id: string): Promise<ExamsEntity> {
+    const record = await this.examsModel.findById(new Types.ObjectId(id)).populate('user').populate('lab').lean().exec();
+    const examTypes = (await this.examTypesService.getAll({
+      filters: [
+        {
+          field: 'parentGroups',
+          operator: 'IS NULL OR NOT EXISTS',
+        }
+      ]
+    }))?.records as ExamTypesEntity[];
+    record.results = this.mapExamResults(examTypes, record.results);
+    return record;
   }
 
   async getAll(pagination?: PaginationProps) {
-    const { query, $and } = mapPagination(this.examsModel, {pagination, populate: [
-      {
-        $lookup: {
-          from: ProvidersEnum.LABS.toLowerCase(),
-          localField: 'lab',
-          foreignField: '_id',
-          as: 'lab'
+    const { query, $and } = mapPagination(this.examsModel, {
+      pagination, populate: [
+        {
+          $lookup: {
+            from: ProvidersEnum.LABS.toLowerCase(),
+            localField: 'lab',
+            foreignField: '_id',
+            as: 'lab'
+          }
+        },
+        {
+          $unwind: { path: '$lab', preserveNullAndEmptyArrays: true },
+
         }
-      },
-      {
-        $unwind: {path: '$lab', preserveNullAndEmptyArrays: true},
-        
-      }
-    ]});
+      ]
+    });
 
     const records = await query.exec();
     return {
@@ -59,9 +105,9 @@ export class ExamsService {
     const lab = await this.labsService.getById(body.lab);
     record.user = user;
     record.lab = lab;
-    if(body.results) {
+    if (body.results) {
       const examTypes = (await this.examTypesService.getAll())?.records as ExamTypesEntity[];
-      const res = await this.mapEntryGroups(examTypes,body.results)
+      const res = await this.mapEntryGroups(examTypes, body.results)
       record.results = res;
     }
     record = await this.examsModel.create(record);
@@ -69,21 +115,18 @@ export class ExamsService {
   }
 
   private mapEntryGroups(examTypes: ExamTypesEntity[], resultEntries: ResultEntryDTO[]) {
-    
-    if(!resultEntries?.length) return;
+    if (!resultEntries?.length) return;
     return resultEntries.map(resultEntry => {
       const examType = examTypes.find(type => compareIds(type._id, resultEntry.examType));
       if (!examType) throw new RecordNotFoundException('results.examTypeNotFound');
-      // console.log('🚀 ~ file: exams.service.ts:84 ~ ExamsService ~ entryGroups ~ resultEntry.entryGroups 🚀 ➡➡', resultEntry.entryGroups);
       const entryGroups = resultEntry.entryGroups?.map(entryGroup => {
         const examTypeGroup = examType.examTypesGroups.find(type => compareIds(type._id, entryGroup.examType))
         return {
           examType: examTypeGroup,
           value: entryGroup.value,
-          entryGroups: this.mapEntryGroups(examTypes,entryGroup.entryGroups)
+          entryGroups: this.mapEntryGroups(examTypes, entryGroup.entryGroups)
         } as ResultEntry
       });
-      // console.dir(entryGroups, {depth: 10});
       return { ...resultEntry, examType, value: resultEntry.value, entryGroups } as ResultEntry;
     }) as ResultEntry[];
   }
@@ -105,7 +148,8 @@ export class ExamsService {
     }
     if (body.results) {
       const examTypes = (await this.examTypesService.getAll())?.records as ExamTypesEntity[];
-      const res = await this.mapEntryGroups(examTypes,body.results)
+      const res = await this.mapEntryGroups(examTypes, body.results)
+      console.log('🚀 ~ file: exams.service.ts:152 ~ ExamsService ~ update ~ res 🚀 ➡➡', res);
       record.results = res;
     }
     return this.examsModel.findByIdAndUpdate(id, record, { new: true }).populate('user').populate('lab');
