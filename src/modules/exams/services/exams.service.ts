@@ -28,13 +28,13 @@ export class ExamsService {
     return resultEntries.map(resultEntry => {
       const examType = examTypes.find(type => compareIds(type._id, resultEntry.examType as unknown as Types.ObjectId));
       const entryGroups = resultEntry.entryGroups?.map(entryGroup => {
-        const examTypeGroup = examType.examTypesGroups.find(type => compareIds(type._id, entryGroup.examType as unknown as Types.ObjectId))
+        const examTypeGroup = examType.examTypesGroups?.find(type => compareIds(type._id, entryGroup.examType as unknown as Types.ObjectId))
         return {
           _id: entryGroup._id,
           examType: examTypeGroup,
           value: entryGroup.value,
           entryGroups: entryGroup.entryGroups?.filter(entryGroup => !isEmpty(entryGroup.value))?.map(entryGroupInner => {
-            const examTypeEntryGroup = examTypeGroup.examTypes.find(type => compareIds(type._id, entryGroupInner.examType as unknown as Types.ObjectId))
+            const examTypeEntryGroup = examTypeGroup?.examTypes.find(type => compareIds(type._id, entryGroupInner.examType as unknown as Types.ObjectId))
             return {
               examType: examTypeEntryGroup,
               value: entryGroupInner.value,
@@ -120,7 +120,7 @@ export class ExamsService {
       const examType = examTypes.find(type => compareIds(type._id, resultEntry.examType));
       if (!examType) throw new RecordNotFoundException('results.examTypeNotFound');
       const entryGroups = resultEntry.entryGroups?.map(entryGroup => {
-        const examTypeGroup = examType.examTypesGroups.find(type => compareIds(type._id, entryGroup.examType))
+        const examTypeGroup = examType.examTypesGroups?.find(type => compareIds(type._id, entryGroup.examType))
         return {
           examType: examTypeGroup,
           value: entryGroup.value,
