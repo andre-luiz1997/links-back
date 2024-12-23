@@ -26,14 +26,6 @@ export class ResultEntry implements IResultEntry {
   })
   observations?: string;
   @ApiProperty({
-    required: false
-  })
-  method?: string;
-  @ApiProperty({
-    required: false
-  })
-  material?: string;
-  @ApiProperty({
     required: false,
     type: () => ResultEntry
   })
@@ -47,7 +39,5 @@ ResultEntrySchema.add({
   value: { type: Number, required: true },
   unit: { type: String, required: false },
   observations: { type: String, required: false },
-  method: { type: String, required: false },
-  material: { type: String, required: false },
   entryGroups: {type: [ResultEntrySchema], required: false}
 })

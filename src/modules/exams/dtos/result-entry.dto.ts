@@ -28,18 +28,6 @@ export class ResultEntryDTO implements Omit<IResultEntry, 'examType' | 'entryGro
   @ApiProperty({
     required: false
   })
-  @IsString()
-  @IsOptional()
-  method?: string;
-  @ApiProperty({
-    required: false
-  })
-  @IsString()
-  @IsOptional()
-  material?: string;
-  @ApiProperty({
-    required: false
-  })
   @IsOptional()
   @IsArray()
   @Type(() => ResultEntryDTO)

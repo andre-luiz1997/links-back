@@ -48,8 +48,6 @@ export class ExamsService {
         examType,
         entryGroups,
         value: resultEntry.value,
-        material: resultEntry.material,
-        method: resultEntry.method,
         observations: resultEntry.observations,
         unit: resultEntry.unit,
        } as ResultEntry;
@@ -95,6 +93,13 @@ export class ExamsService {
         $count: "total"
       }]).exec())?.[0]?.total,
     };
+  }
+
+  async getByExamType(examTypeId: string, userId: string) {
+    return this.examsModel.find({
+      user: new Types.ObjectId(userId),
+      'results.examType': new Types.ObjectId(examTypeId)
+    })
   }
 
   async create(body: CreateExamDTO): Promise<ExamsEntity> {

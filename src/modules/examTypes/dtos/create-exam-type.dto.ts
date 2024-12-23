@@ -57,21 +57,6 @@ export class CreateExamTypeDTO implements Omit<IExamTypes, '_id' | 'createdAt' |
   @ApiProperty({
     required: false
   })
-  @IsString()
-  @IsOptional()
-  @Trim()
-  material?: string;
-  @ApiProperty({
-    required: false
-  })
-  @IsString()
-  @IsOptional()
-  @Trim()
-  method?: string;
-
-  @ApiProperty({
-    required: false
-  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })

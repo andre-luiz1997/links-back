@@ -1,5 +1,5 @@
 import { LabsModule } from '@modules/labs/labs.module';
-import { Injectable, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule, type MongooseModuleOptions } from '@nestjs/mongoose';
 import { configureDotEnv } from '@shared/functions';
 import { Providers } from '@shared/providers';
@@ -11,6 +11,7 @@ import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ExamsModule } from '@modules/exams/exams.module';
 import { UtilsModule } from '@modules/utils/utils.module';
+import { ReportsModule } from '@modules/reports/reports.module';
 
 configureDotEnv();
 
@@ -45,7 +46,8 @@ const mongooseConfigs = getMongooseConfig();
     UsersModule,
     AuthModule,
     ExamsModule,
-    UtilsModule
+    UtilsModule,
+    ReportsModule
   ],
   controllers: [AppController],
   providers: [AppService],

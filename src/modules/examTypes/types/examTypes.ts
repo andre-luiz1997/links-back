@@ -20,16 +20,6 @@ export interface IExamTypes extends DBEntity {
    * @example mg/dl
    */
   unit?: string;
-  /**
-   * Material of the exam.
-   * @example Blood
-   */
-  material?: string;
-  /**
-  * Method of the exam.
-  * @example ELISA
-  */
-  method?: string;
   /** 
    * Group of exams derived of the main examType
    */

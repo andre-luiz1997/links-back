@@ -20,7 +20,7 @@ export class ExamTypesService implements DefaultService {
     return this.examTypesModel.exists({ [prop]: value, _id: { $nin: ignoreIds.map(id => new Types.ObjectId(id)) } });
   }
 
-  existsAnd(props: {prop: string, value: any, ignoreIds: string[]}[]) {
+  existsAnd(props: { prop: string, value: any, ignoreIds: string[] }[]) {
     return this.examTypesModel.exists({ $and: props.map(({ prop, value, ignoreIds }) => ({ [prop]: value, _id: { $nin: ignoreIds.map(id => new Types.ObjectId(id)) } })) });
   }
 
@@ -121,14 +121,11 @@ export class ExamTypesService implements DefaultService {
     const examTypesGroups = body.examTypesGroups;
     body.examTypesGroups = undefined;
     const examType = new this.examTypesModel(body);
-    if (await this.existsAnd([
-      { prop: 'name', value: body.name, ignoreIds: [] },
-      { prop: 'method', value: body.method, ignoreIds: [] },
-    ])) throw new Error('examType.nameExists');
+    if (await this.exists('name', body.name)) throw new Error('examType.nameExists');
     if (!examType._id) examType._id = new Types.ObjectId();
     const record = await this.examTypesModel.create(examType);
     record.examTypesGroups = await this.prepareExamTypesGroups(examTypesGroups, record._id.toString());
-    if(!record.parentGroups?.length) record.parentGroups = undefined;
+    if (!record.parentGroups?.length) record.parentGroups = undefined;
     await record.save();
     return record;
   }
@@ -136,12 +133,9 @@ export class ExamTypesService implements DefaultService {
   async update(id: string, body: UpdateExamTypeDTO): Promise<ExamTypesEntity> {
     const record = await this.getById(id);
     if (!record) throw new RecordNotFoundException();
-    if (await this.existsAnd([
-      { prop: 'name', value: body.name, ignoreIds: [id] },
-      { prop: 'method', value: body.method, ignoreIds: [id] },
-    ])) throw new Error('examType.nameExists');
+    if (await this.exists('name', body.name, [id])) throw new Error('examType.nameExists');
     const examTypesGroups = await this.prepareExamTypesGroups(body.examTypesGroups, id);
-    if(!record.parentGroups?.length) record.parentGroups = undefined;
+    if (!record.parentGroups?.length) record.parentGroups = undefined;
     return this.examTypesModel.findByIdAndUpdate(id, { ...body, examTypesGroups }, { new: true });
   }
 
