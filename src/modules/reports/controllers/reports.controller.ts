@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, ParseArrayPipe, Query, Req } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseArrayPipe, Query, Req, UnauthorizedException } from '@nestjs/common';
 import { ReportsService } from '../services/reports.service';
 import { CustomRequest } from '@shared/types';
 import { ResponseFactory } from '@shared/response';
@@ -28,7 +28,7 @@ export class ReportsController {
     @Query('start') start: string,
     @Query('end') end: string,
   ) {
-    
+
     return ResponseFactory.build(await this.reportsService.getExamTypeReport(examTypeId, req.user._id.toString(), {
       start: new Date(start),
       end: new Date(end),
@@ -54,14 +54,25 @@ export class ReportsController {
   })
   async examTypeIds(
     @Req() req: CustomRequest,
-    @Query('examTypeIds', new ParseArrayPipe({separator: ','})) examTypeIds: string[],
+    @Query('examTypeIds', new ParseArrayPipe({ separator: ',' })) examTypeIds: string[],
     @Query('start') start: string,
     @Query('end') end: string,
   ) {
-    if(!examTypeIds?.length) throw new Error('At least one exam type id must be provided');
+    if (!examTypeIds?.length) throw new Error('At least one exam type id must be provided');
     return ResponseFactory.build(await this.reportsService.getExamTypesReport(examTypeIds?.filter(item => !isEmpty(item)), req.user._id.toString(), {
       start: new Date(start),
       end: new Date(end),
     }));
+  }
+
+  @Get('dashboard-indicators')
+  async getDashboardIndicators(@Req() req: CustomRequest) {
+    try {
+      const user = req.user;
+      if (!user) throw new UnauthorizedException();
+      return ResponseFactory.build(await this.reportsService.getDashboardIndicators(user));
+    } catch (error) {
+      throw error;
+    }
   }
 }

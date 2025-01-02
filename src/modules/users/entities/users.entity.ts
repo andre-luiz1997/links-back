@@ -3,6 +3,7 @@ import type { IUsers } from "@modules/users/types/users";
 import { ApiProperty } from "@nestjs/swagger";
 import { Schema, Types } from "mongoose";
 import { ProvidersEnum } from "src/constants";
+import { IUserSetting } from "../types/setting";
 
 export class UsersEntity implements IUsers {
   @ApiProperty()
@@ -31,7 +32,16 @@ export class UsersEntity implements IUsers {
     required: true
   })
   role: RolesEntity;
+  @ApiProperty({
+    required: false
+  })
+  settings?: IUserSetting[];
 }
+
+export const UserSettingSchema = new Schema<IUserSetting>({
+  key: { type: String, required: true },
+  value: { type: Schema.Types.Mixed, required: false }
+}, { _id: false });
 
 export const UsersSchema = new Schema<UsersEntity>({
   _id: Types.ObjectId,
@@ -40,6 +50,7 @@ export const UsersSchema = new Schema<UsersEntity>({
   passwordHash: { type: String, required: true, select: false },
   status: { type: Boolean, required: true, default: true },
   role: { type: Types.ObjectId, ref: ProvidersEnum.ROLES, required: true },
+  settings: { type: [UserSettingSchema], required: false }
 }, {
   timestamps: true,
 })

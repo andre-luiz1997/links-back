@@ -13,6 +13,10 @@ export enum ProvidersEnum {
 	ROLES = 'ROLES',
 }
 
+export enum SettingsEnum {
+	DASHBOARD_INDICATORS = 'DASHBOARD_INDICATORS',
+}
+
 export const JWT = {
 	secret: process.env.JWT_SECRET,
 	ACCESS_TOKEN_EXPIRATION: '1d',

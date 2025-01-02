@@ -44,14 +44,14 @@ export class ExamsService {
           })
         } as ResultEntry
       });
-      return { 
+      return {
         _id: resultEntry._id,
         examType,
         entryGroups,
         value: resultEntry.value,
         observations: resultEntry.observations,
         unit: resultEntry.unit,
-       } as ResultEntry;
+      } as ResultEntry;
     });
   }
 
@@ -96,19 +96,19 @@ export class ExamsService {
     };
   }
 
-  async getByExamType(examTypeId: string | string[], userId: string, props?: {start?: Date, end?: Date}) {
+  async getByExamType(examTypeId: string | string[], userId: string, props?: { start?: Date, end?: Date, sortOrder?: -1 | 1, populate?: any }) {
     const where: RootFilterQuery<ExamsEntity> = {
       user: new Types.ObjectId(userId),
-      'results.examType': Array.isArray(examTypeId) ? {$in: examTypeId.map(id => new Types.ObjectId(id))} : new Types.ObjectId(examTypeId)
+      'results.examType': Array.isArray(examTypeId) ? { $in: examTypeId.map(id => new Types.ObjectId(id)) } : new Types.ObjectId(examTypeId)
     }
     const date = []
-    if(props?.start) {
+    if (props?.start) {
       date.push({ $gte: dayjs(props.start).toDate() })
     }
-    if(props?.end) {
+    if (props?.end) {
       date.push({ $lte: dayjs(props.end).toDate() })
     }
-    if(date.length) {
+    if (date.length) {
       where.date = {}
       date.forEach((d) => {
         Object.entries(d).forEach(([key, value]) => {
@@ -116,7 +116,7 @@ export class ExamsService {
         })
       });
     }
-    return this.examsModel.find(where)
+    return this.examsModel.find(where).sort({ date: props?.sortOrder ?? 1 }).populate(props?.populate).lean().exec();
   }
 
   async create(body: CreateExamDTO): Promise<ExamsEntity> {

@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IUsers } from "../types/users";
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword, MinLength } from "class-validator";
+import { IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
 import { Trim } from "@shared/transformers";
 import { Transform } from "class-transformer";
+import { UpdateUserSettingsDTO } from "./update-user-setting.dto";
 
 export class CreateUserDTO implements Omit<IUsers, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'passwordHash' | 'role'> {
   @ApiProperty()
@@ -33,6 +34,11 @@ export class CreateUserDTO implements Omit<IUsers, '_id' | 'createdAt' | 'update
   @IsString()
   @IsOptional()
   role?: string;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  settings?: UpdateUserSettingsDTO[];
 
   status = true; 
 }
