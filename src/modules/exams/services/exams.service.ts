@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { RecordNotFoundException } from '@shared/exceptions';
-import { Model, Types } from 'mongoose';
+import { Model, RootFilterQuery, Types } from 'mongoose';
 import { ProvidersEnum } from 'src/constants';
 import { CreateExamDTO, ResultEntryDTO, UpdateExamDTO } from '../dtos';
 import { ExamsEntity } from '../entities/exams.entity';
@@ -9,10 +9,11 @@ import { UsersService } from '@modules/users/services/users.service';
 import { LabsService } from '@modules/labs/services/labs.service';
 import { ExamTypesService } from '@modules/examTypes/services/examTypes.service';
 import { mapPagination, PaginationProps } from '@shared/pagination';
-import { compareIds } from '@shared/functions';
+import { compareIds, configureDayjs } from '@shared/functions';
 import { ResultEntry } from '../entities';
 import { ExamTypesEntity } from '@modules/examTypes/entities/examTypes.entity';
 import { isEmpty } from 'class-validator';
+const dayjs = configureDayjs();
 
 @Injectable()
 export class ExamsService {
@@ -95,11 +96,27 @@ export class ExamsService {
     };
   }
 
-  async getByExamType(examTypeId: string, userId: string) {
-    return this.examsModel.find({
+  async getByExamType(examTypeId: string | string[], userId: string, props?: {start?: Date, end?: Date}) {
+    const where: RootFilterQuery<ExamsEntity> = {
       user: new Types.ObjectId(userId),
-      'results.examType': new Types.ObjectId(examTypeId)
-    })
+      'results.examType': Array.isArray(examTypeId) ? {$in: examTypeId.map(id => new Types.ObjectId(id))} : new Types.ObjectId(examTypeId)
+    }
+    const date = []
+    if(props?.start) {
+      date.push({ $gte: dayjs(props.start).toDate() })
+    }
+    if(props?.end) {
+      date.push({ $lte: dayjs(props.end).toDate() })
+    }
+    if(date.length) {
+      where.date = {}
+      date.forEach((d) => {
+        Object.entries(d).forEach(([key, value]) => {
+          where.date[key] = value;
+        })
+      });
+    }
+    return this.examsModel.find(where)
   }
 
   async create(body: CreateExamDTO): Promise<ExamsEntity> {
@@ -154,7 +171,6 @@ export class ExamsService {
     if (body.results) {
       const examTypes = (await this.examTypesService.getAll())?.records as ExamTypesEntity[];
       const res = await this.mapEntryGroups(examTypes, body.results)
-      console.log('🚀 ~ file: exams.service.ts:152 ~ ExamsService ~ update ~ res 🚀 ➡➡', res);
       record.results = res;
     }
     return this.examsModel.findByIdAndUpdate(id, record, { new: true }).populate('user').populate('lab');

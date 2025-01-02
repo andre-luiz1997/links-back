@@ -15,6 +15,7 @@
     "/src/modules/exams/entities",
     "/src/modules/roles/dtos",
     "/src/modules/auth/gateways",
-    "/src/modules/utils/usecases"
+    "/src/modules/utils/usecases",
+    "/src/modules/shared/pipes"
   ]
 }
