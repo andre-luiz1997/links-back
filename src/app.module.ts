@@ -12,6 +12,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { ExamsModule } from '@modules/exams/exams.module';
 import { UtilsModule } from '@modules/utils/utils.module';
 import { ReportsModule } from '@modules/reports/reports.module';
+import { HealthIndicatorsModule } from '@modules/healthIndicators/healthIndicators.module';
 
 configureDotEnv();
 
@@ -47,7 +48,8 @@ const mongooseConfigs = getMongooseConfig();
     AuthModule,
     ExamsModule,
     UtilsModule,
-    ReportsModule
+    ReportsModule,
+    HealthIndicatorsModule
   ],
   controllers: [AppController],
   providers: [AppService],

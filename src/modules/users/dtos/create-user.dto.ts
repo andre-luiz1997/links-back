@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IUsers } from "../types/users";
-import { IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
+import { IsArray, IsDateString, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
 import { Trim } from "@shared/transformers";
 import { Transform } from "class-transformer";
 import { UpdateUserSettingsDTO } from "./update-user-setting.dto";
@@ -19,6 +19,14 @@ export class CreateUserDTO implements Omit<IUsers, '_id' | 'createdAt' | 'update
   @Trim()
   @Transform(({ value }) => value.toLowerCase())
   email: string;
+
+  @ApiProperty({
+    required: false
+  })
+  @IsOptional()
+  @IsDateString()
+  birthDate?: Date;
+
   @ApiProperty()
   @IsString()
   // @IsStrongPassword({

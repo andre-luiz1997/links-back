@@ -6,6 +6,7 @@ import { ReferenceValuesSchema } from '@modules/referenceValues/entities/referen
 import { UsersSchema } from '@modules/users/entities/users.entity';
 import type { Schema } from "mongoose";
 import { ProvidersEnum } from 'src/constants';
+import { HealthIndicatorsSchema } from '@modules/healthIndicators/entities/examTypes.entity';
 
 export interface IProvider {
 	name: ProvidersEnum;
@@ -41,4 +42,9 @@ export const RolesProvider: IProvider = {
 	schema: RolesSchema
 };
 
-export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ReferenceValuesProvider, RolesProvider];
+export const HealthIndicatorsProvider: IProvider = {
+	name: ProvidersEnum.HEALTHINDICATORS,
+	schema: HealthIndicatorsSchema
+};
+
+export const Providers = [ExamTypesProvider, ExamsProvider, LabsProvider, UsersProvider, ReferenceValuesProvider, RolesProvider, HealthIndicatorsProvider];

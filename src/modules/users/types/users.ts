@@ -4,6 +4,7 @@ import { IUserSetting } from "./setting";
 export interface IUsers extends DBEntity {
   name: string;
   email: string;
+  birthDate?: Date;
   passwordHash: string;
   status: boolean;
   role?: IRoles;

@@ -11,6 +11,7 @@ export enum ProvidersEnum {
 	EXAMS = 'EXAMS',
 	AUTH = 'AUTH',
 	ROLES = 'ROLES',
+	HEALTHINDICATORS = 'HEALTHINDICATORS',
 }
 
 export enum SettingsEnum {

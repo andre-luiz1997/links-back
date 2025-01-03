@@ -15,6 +15,8 @@ export class UsersEntity implements IUsers {
   @ApiProperty()
   passwordHash: string;
   @ApiProperty()
+  birthDate?: Date;
+  @ApiProperty()
   createdAt: Date;
   @ApiProperty({
     required: false,
@@ -48,6 +50,7 @@ export const UsersSchema = new Schema<UsersEntity>({
   name: { type: String, required: true },
   email: { type: String, required: true },
   passwordHash: { type: String, required: true, select: false },
+  birthDate: { type: Date, required: false },
   status: { type: Boolean, required: true, default: true },
   role: { type: Types.ObjectId, ref: ProvidersEnum.ROLES, required: true },
   settings: { type: [UserSettingSchema], required: false }
