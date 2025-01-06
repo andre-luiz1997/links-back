@@ -16,6 +16,8 @@
     "/src/modules/roles/dtos",
     "/src/modules/auth/gateways",
     "/src/modules/utils/usecases",
-    "/src/modules/shared/pipes"
+    "/src/modules/shared/pipes",
+    "/src/modules/users/modules",
+    "/src/modules/users/modules/health-indicators/dtos"
   ]
 }

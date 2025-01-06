@@ -6,7 +6,7 @@ import { ReferenceValuesSchema } from '@modules/referenceValues/entities/referen
 import { UsersSchema } from '@modules/users/entities/users.entity';
 import type { Schema } from "mongoose";
 import { ProvidersEnum } from 'src/constants';
-import { HealthIndicatorsSchema } from '@modules/healthIndicators/entities/examTypes.entity';
+import { HealthIndicatorsSchema } from '@modules/users/modules/health-indicators/entities/healthIndicators.entity';
 
 export interface IProvider {
 	name: ProvidersEnum;
