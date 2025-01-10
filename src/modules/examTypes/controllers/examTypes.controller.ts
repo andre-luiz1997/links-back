@@ -19,24 +19,20 @@ export class ExamTypesController {
 
   @Get()
   async getRecords(@Pagination() pagination: PaginationProps): Promise<DefaultPaginatedResponse<ExamTypesEntity>> {
-    console.log('🚀 ~ file: examTypes.controller.ts:22 ~ ExamTypesController ~ getRecords ~ pagination 🚀 ➡➡', pagination);
     try {
       return ResponseFactory.build(await this.examTypesService.getAll(pagination));
     } catch (error) {
-      console.log(error)
       throw error
     }
   }
 
   @Post()
   async createRecord(@Body() body: CreateExamTypeDTO) {
-    console.log('🚀 ~ file: examTypes.controller.ts:27 ~ ExamTypesController ~ createRecord ~ body 🚀 ➡➡', body);
     return ResponseFactory.build(await this.examTypesService.create(body));
   }
 
   @Patch(':id')
   async updateRecord(@Param('id') id: string, @Body() body: UpdateExamTypeDTO) {
-    console.log('🚀 ~ file: examTypes.controller.ts:33 ~ ExamTypesController ~ updateRecord ~ body 🚀 ➡➡', body);
     return ResponseFactory.build(await this.examTypesService.update(id, body));
   }
 

@@ -1,15 +1,17 @@
 import { Model, PipelineStage, Types } from "mongoose";
+import { configureDayjs } from "./functions";
+const dayjs = configureDayjs();
 
 export type FilterOperators = 'LIKE' | 'LIKE_ID' | 'NOT LIKE' |
   'GREATER THAN' | 'GREATER THAN OR EQUAL' |
   'LESS THAN' | 'LESS THAN OR EQUAL' |
-  'IN' | 'NOT IN' |
+  'IN' | 'NOT IN' | 'IS' | 'IS NOT' |
   'IS NULL' | 'IS NULL OR NOT EXISTS' | 'IS NOT NULL' |
   'BETWEEN' | '%%' | '%_' | '_%';
 
 export interface PaginationFilter {
   field: string;
-  value?: string | string[] | number | number[] | Date | Date[];
+  value?: string | string[] | number | number[] | Date | Date[] | Types.ObjectId | Types.ObjectId[];
   operator: FilterOperators;
 }
 
@@ -23,6 +25,8 @@ export interface PaginationProps {
   filters?: PaginationFilter[];
 }
 
+const datableFields = ['createdAt', 'updatedAt', 'deletedAt', 'date', 'start', 'end', 'dateOfBirth']
+
 export function mapPagination(model: Model<any>, options?: { pagination?: PaginationProps, populate?: PipelineStage[] }) {
   const { pagination, populate } = options;
   const where = {};
@@ -31,12 +35,20 @@ export function mapPagination(model: Model<any>, options?: { pagination?: Pagina
     pagination.filters.forEach((filter: PaginationFilter) => {
       if (filter.operator === 'LIKE_ID' && typeof filter.value === 'string') {
         where[filter.field] = new Types.ObjectId(filter.value);
+      } else if (filter.operator === 'IS') {
+        where[filter.field] = filter.value;
+      } else if (filter.operator === 'IS NOT') {
+        where[filter.field] = { $not: filter.value };
       } else if (filter.operator === 'LIKE' || filter.operator === '%%') {
         where[filter.field] = { $regex: filter.value, $options: 'i' };
       } else if (filter.operator === 'IN') {
         where[filter.field] = { $in: filter.value };
       } else if (filter.operator === 'BETWEEN') {
-        where[filter.field] = { $gte: filter.value[0], $lte: filter.value[1] };
+        if(datableFields.includes(filter.field)) {
+          where[filter.field] = { $gte: dayjs(filter.value[0]).toDate(), $lte: dayjs(filter.value[1]).toDate() };
+        } else {
+          where[filter.field] = { $gte: filter.value[0], $lte: filter.value[1] };
+        }
       } else if (filter.operator === 'IS NULL OR NOT EXISTS') {
         $and.push({
           $match: {

@@ -6,6 +6,7 @@ import { HealthIndicatorsEntity } from './entities/healthIndicators.entity';
 import { UsersService } from '@modules/users/services/users.service';
 import { CreateHealthIndicatorDTO, UpdateHealthIndicatorDTO } from './dtos';
 import { RecordNotFoundException } from '@shared/exceptions';
+import { mapPagination, PaginationProps } from '@shared/pagination';
 
 @Injectable()
 export class HealthIndicatorsService {
@@ -19,16 +20,25 @@ export class HealthIndicatorsService {
   }
 
   getById(id: string): Promise<HealthIndicatorsEntity> {
-    return this.healthIndicatorsModel.findById(new Types.ObjectId(id)).populate('role').exec();
+    return this.healthIndicatorsModel.findById(new Types.ObjectId(id)).populate('user').exec();
   }
 
   getOne(where: any, withPassword?: boolean): Promise<HealthIndicatorsEntity | undefined> {
-    if (withPassword) return this.healthIndicatorsModel.findOne(where).populate('role').select('+passwordHash').exec();
-    return this.healthIndicatorsModel.findOne(where).populate('role').exec();
+    if (withPassword) return this.healthIndicatorsModel.findOne(where).populate('user').exec();
+    return this.healthIndicatorsModel.findOne(where).populate('user').exec();
   }
 
-  getAll(): Promise<HealthIndicatorsEntity[]> {
-    return this.healthIndicatorsModel.find().exec();
+  async getAll(pagination?: PaginationProps) {
+    const { query, $and } = mapPagination(this.healthIndicatorsModel, {
+      pagination
+    });
+    const records = await query.exec();
+    return {
+      records,
+      totalRecords: (await this.healthIndicatorsModel.aggregate([...$and, {
+        $count: "total"
+      }]).exec())?.[0]?.total,
+    };
   }
 
   async create(body: CreateHealthIndicatorDTO): Promise<HealthIndicatorsEntity> {
@@ -37,7 +47,7 @@ export class HealthIndicatorsService {
     const user = await this.usersService.getById(body.user);
     if (!user) throw new RecordNotFoundException('healthIndicators.userNotFound');
     record.user = user;
-    return (await this.healthIndicatorsModel.create(record)).populate('role');
+    return (await this.healthIndicatorsModel.create(record));
   }
 
   async update(id: string, body: UpdateHealthIndicatorDTO): Promise<HealthIndicatorsEntity> {
@@ -50,7 +60,7 @@ export class HealthIndicatorsService {
       if (!user) throw new RecordNotFoundException('healthIndicators.userNotFound');
       record.user = user;
     }
-    return this.healthIndicatorsModel.findByIdAndUpdate(id, record, { new: true }).populate('user');
+    return this.healthIndicatorsModel.findByIdAndUpdate(id, record, { new: true });
   }
 
   async delete(id: string): Promise<HealthIndicatorsEntity> {

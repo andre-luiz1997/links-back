@@ -1,8 +1,11 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Req } from '@nestjs/common';
 import { HealthIndicatorsService } from './healthindicators.service';
 import { CreateHealthIndicatorDTO, UpdateHealthIndicatorDTO } from './dtos';
-import { ResponseFactory } from '@shared/response';
+import { DefaultPaginatedResponse, ResponseFactory } from '@shared/response';
 import { CustomRequest } from '@shared/types';
+import { PaginationProps } from '@shared/pagination';
+import { Pagination } from '@shared/decorators';
+import { ExamsEntity } from '@modules/exams/entities';
 
 @Controller('health-indicators')
 export class HealthIndicatorsController {
@@ -12,18 +15,25 @@ export class HealthIndicatorsController {
 
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
-    return this.healthIndicatorsService.getById(id);
+    return ResponseFactory.build(await this.healthIndicatorsService.getById(id)); 
   }
 
   @Get()
-  async getRecords() {
-    return this.healthIndicatorsService.getAll();
+  async getRecords(@Req() req: CustomRequest, @Pagination() pagination: PaginationProps): Promise<DefaultPaginatedResponse<ExamsEntity>> {
+    if (pagination) {
+      pagination.filters ??= []
+      if (!pagination.filters?.find(f => f.field === 'user')) {
+        pagination.filters.push({ field: 'user', value: req.user._id, operator: 'IS' });
+      }
+    }
+    
+    return ResponseFactory.build(await this.healthIndicatorsService.getAll(pagination));
   }
 
   @Post()
   async createRecord(@Req() req: CustomRequest, @Body() body: CreateHealthIndicatorDTO) {
     body.user = req.user._id.toString();
-    return this.healthIndicatorsService.create(body);
+    return ResponseFactory.build(await this.healthIndicatorsService.create(body));
   }
 
   @Patch(':id')
@@ -34,6 +44,6 @@ export class HealthIndicatorsController {
 
   @Delete(':id')
   async deleteRecord(@Param('id') id: string) {
-    return this.healthIndicatorsService.delete(id);
+    return ResponseFactory.build(await this.healthIndicatorsService.delete(id));
   }
 }
