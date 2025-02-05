@@ -18,6 +18,7 @@
     "/src/modules/utils/usecases",
     "/src/modules/shared/pipes",
     "/src/modules/users/modules",
-    "/src/modules/users/modules/health-indicators/dtos"
+    "/src/modules/users/modules/health-indicators/dtos",
+    "/src/modules/saas/plans/dtos"
   ]
 }

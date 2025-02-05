@@ -12,6 +12,7 @@ export enum ProvidersEnum {
 	AUTH = 'AUTH',
 	ROLES = 'ROLES',
 	HEALTHINDICATORS = 'HEALTHINDICATORS',
+	PLANS = 'PLANS',
 }
 
 export enum SettingsEnum {
