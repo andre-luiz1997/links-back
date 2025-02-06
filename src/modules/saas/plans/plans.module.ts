@@ -1,12 +1,21 @@
 import { PlansService } from './services/plans.service';
 import { PlansController } from './controllers/plans.controller';
 import { Module } from '@nestjs/common';
+import { PlansProvider } from '@shared/providers';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-    imports: [],
+    imports: [
+        MongooseModule.forFeature([PlansProvider])
+    ],
     controllers: [
-        PlansController,],
+        PlansController
+    ],
     providers: [
-        PlansService,],
+        PlansService
+    ],
+    exports: [
+        PlansService
+    ]
 })
 export class PlansModule { }

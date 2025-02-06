@@ -12,6 +12,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { ExamsModule } from '@modules/exams/exams.module';
 import { UtilsModule } from '@modules/utils/utils.module';
 import { ReportsModule } from '@modules/reports/reports.module';
+import { SaasModule } from '@modules/saas/saas.module';
 
 configureDotEnv();
 
@@ -48,6 +49,7 @@ const mongooseConfigs = getMongooseConfig();
     ExamsModule,
     UtilsModule,
     ReportsModule,
+    SaasModule
   ],
   controllers: [AppController],
   providers: [AppService],
