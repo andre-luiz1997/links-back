@@ -2,11 +2,15 @@ import { configureDotEnv } from "@shared/functions";
 
 configureDotEnv();
 
+export const LinkConfigurationThemes = ['default', 'nature', 'ocean', 'sunset','retro','professional','custom'];
+export type LinkConfigurationTheme = typeof LinkConfigurationThemes[number];
+
 export enum ProvidersEnum {
 	USERS = 'USERS',
 	AUTH = 'AUTH',
 	ROLES = 'ROLES',
 	PLANS = 'PLANS',
+	LINKS = 'LINKS'
 }
 
 export enum SettingsEnum {
@@ -37,5 +41,14 @@ export const PERMISSIONS: IPermissions[] = [
 			'edit',
 			'delete',
 		]
-	}
+	},
+	{
+		context: 'links',
+		permissions: [
+			'add',
+			'view',
+			'edit',
+			'delete',
+		]
+	},
 ]

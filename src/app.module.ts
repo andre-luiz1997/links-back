@@ -8,6 +8,7 @@ import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { UtilsModule } from '@modules/utils/utils.module';
 import { SaasModule } from '@modules/saas/saas.module';
+import { LinksModule } from '@modules/links/links.module';
 
 configureDotEnv();
 
@@ -36,7 +37,8 @@ const mongooseConfigs = getMongooseConfig();
     UsersModule,
     AuthModule,
     UtilsModule,
-    SaasModule
+    SaasModule,
+    LinksModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,3 +1,4 @@
+import { LinksSchema } from '@modules/links/entities/links.entity';
 import { RolesSchema } from '@modules/roles/entities/roles.entity';
 import { UsersSchema } from '@modules/users/entities/users.entity';
 import type { Schema } from "mongoose";
@@ -24,4 +25,10 @@ export const RolesProvider: IProvider = {
 	schema: RolesSchema
 };
 
-export const Providers = [UsersProvider, RolesProvider, PlansProvider];
+
+export const LinksProvider: IProvider = {
+	name: ProvidersEnum.LINKS,
+	schema: LinksSchema
+};
+
+export const Providers = [UsersProvider, RolesProvider, PlansProvider, LinksProvider];
