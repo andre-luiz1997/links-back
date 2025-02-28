@@ -2,7 +2,7 @@ import { RolesEntity } from "@modules/roles/entities/roles.entity";
 import type { IUsers } from "@modules/users/types/users";
 import { ApiProperty } from "@nestjs/swagger";
 import { Schema, Types } from "mongoose";
-import { ProvidersEnum } from "src/constants";
+import { ProvidersEnum, SettingsEnum } from "src/constants";
 import { IUserSetting } from "../types/setting";
 
 export class UsersEntity implements IUsers {
@@ -41,7 +41,7 @@ export class UsersEntity implements IUsers {
 }
 
 export const UserSettingSchema = new Schema<IUserSetting>({
-  key: { type: String, required: true },
+  key: { type: String, enum: SettingsEnum, required: true },
   value: { type: Schema.Types.Mixed, required: false }
 }, { _id: false });
 

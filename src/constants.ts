@@ -3,20 +3,13 @@ import { configureDotEnv } from "@shared/functions";
 configureDotEnv();
 
 export enum ProvidersEnum {
-	EXAMTYPES = 'EXAMTYPES',
-	REFERENCEVALUES = 'REFERENCEVALUES',
-	RESULTS = 'RESULTS',
 	USERS = 'USERS',
-	LABS = 'LABS',
-	EXAMS = 'EXAMS',
 	AUTH = 'AUTH',
 	ROLES = 'ROLES',
-	HEALTHINDICATORS = 'HEALTHINDICATORS',
 	PLANS = 'PLANS',
 }
 
 export enum SettingsEnum {
-	DASHBOARD_INDICATORS = 'DASHBOARD_INDICATORS',
 }
 
 export const JWT = {

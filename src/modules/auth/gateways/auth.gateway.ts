@@ -9,7 +9,7 @@ import { compareIds } from "@shared/functions";
   cors: {
     origin: '*',
   },
-  path: '/auth',
+  path: '/auth-socket',
 })
 export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
