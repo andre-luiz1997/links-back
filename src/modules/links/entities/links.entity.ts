@@ -43,7 +43,8 @@ export const LinksSchema = new Schema<LinksEntity>({
   title: { type: String, required: false },
   user: { type: Types.ObjectId, ref: ProvidersEnum.USERS, required: true },
   items: { type: [LinkItemSchema], required: false },
-  configuration: { type: LinkConfigurationSchema, required: true }
+  configuration: { type: LinkConfigurationSchema, required: true },
+  profile: { type: LinkProfileSchema, required: true }
 }, {
   timestamps: true,
 })

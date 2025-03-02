@@ -31,7 +31,7 @@ export class RolesController {
 
   @Post()
   async createRecord(@Body() body: CreateRoleDTO) {
-    return ResponseFactory.build(this.rolesService.create(body));
+    return ResponseFactory.build(await this.rolesService.create(body));
   }
 
   @Patch(':id')
@@ -43,6 +43,6 @@ export class RolesController {
 
   @Delete(':id')
   async deleteRecord(@Param('id') id: string) {
-    return ResponseFactory.build(this.rolesService.delete(id));
+    return ResponseFactory.build(await this.rolesService.delete(id));
   }
 }
