@@ -34,6 +34,12 @@ export class LinksController {
     return ResponseFactory.build(await this.linksService.create(body));
   }
 
+  @Get('token/:token')
+  async getRecordByToken(@Param('token') token: string) {
+    // throw new Error('error');
+    return ResponseFactory.build(await this.linksService.getOne({_id: token}))
+  }
+
   @Get(':id')
   async getRecordById(@Param('id') id: string) {
     return ResponseFactory.build(await this.linksService.getById(id))
