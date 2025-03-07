@@ -63,6 +63,19 @@ class LinkConfigurationDTO implements ILinkConfiguration {
   @IsNotEmpty()
   @IsString()
   theme: LinkConfigurationTheme = 'default';
+  
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  main_color?: string
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  secondary_color?: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  font_color?: string;
 }
 
 export class CreateLinkDTO implements Omit<ILinks, '_id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {

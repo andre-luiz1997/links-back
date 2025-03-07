@@ -34,7 +34,10 @@ export const LinkItemSchema = new Schema<ILinkItem>({
 }, { _id: false });
 
 export const LinkConfigurationSchema = new Schema<ILinkConfiguration>({
-  theme: { type: String, required: true }
+  theme: { type: String, required: true },
+  main_color: { type: String, required: false },
+  secondary_color: { type: String, required: false },
+  font_color: { type: String, required: false }
 })
 
 export const LinksSchema = new Schema<LinksEntity>({
