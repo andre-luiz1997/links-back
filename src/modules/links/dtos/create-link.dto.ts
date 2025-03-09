@@ -7,12 +7,19 @@ import { Type } from "class-transformer";
 import { ILinkItem } from "../types/link-items";
 import { ILinkConfiguration } from "../types/link-configuration";
 import { LinkConfigurationTheme } from "src/constants";
+import { CreateFileDTO } from "@modules/files/dtos";
+import { IFiles } from "@modules/files/types/files";
 
 class LinkProfileDTO implements ILinkProfile {
   @ApiProperty()
   @IsOptional()
   @IsBoolean()
   show = true;
+
+  @ApiProperty()
+  @IsOptional()
+  @Type(() => CreateFileDTO)
+  image?: IFiles;
 
   @ApiProperty()
   @IsOptional()

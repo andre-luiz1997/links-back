@@ -9,5 +9,6 @@ import { LinksProvider } from '@shared/providers';
 	],
 	controllers: [LinksController],
 	providers: [LinksService],
+	exports: [LinksService]
 })
 export class LinksModule {}

@@ -19,6 +19,7 @@ export class LinksEntity implements ILinks {
 }
 
 export const LinkProfileSchema = new Schema<ILinkProfile>({
+  image: { type: Types.ObjectId, ref: ProvidersEnum.FILES, required: false },
   title: { type: String, required: false },
   subtitle: { type: String, required: false },
   show: { type: Boolean, required: true, default: true },

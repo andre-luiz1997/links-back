@@ -9,6 +9,9 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { UtilsModule } from '@modules/utils/utils.module';
 import { SaasModule } from '@modules/saas/saas.module';
 import { LinksModule } from '@modules/links/links.module';
+import { FilesModule } from '@modules/files/files.module';
+import { join } from 'node:path';
+import { ServeStaticModule } from '@nestjs/serve-static'
 
 configureDotEnv();
 
@@ -34,11 +37,18 @@ const mongooseConfigs = getMongooseConfig();
   imports: [
     MongooseModule.forRoot(mongooseConfigs.uri, mongooseConfigs.options),
     MongooseModule.forFeature(Providers),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.env.PUBLIC_PATH),
+      serveStaticOptions: {
+        dotfiles: 'deny',
+      },
+    }),
     UsersModule,
     AuthModule,
     UtilsModule,
     SaasModule,
-    LinksModule
+    LinksModule,
+    FilesModule
   ],
   controllers: [AppController],
   providers: [AppService],

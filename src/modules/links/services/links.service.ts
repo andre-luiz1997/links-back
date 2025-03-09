@@ -13,7 +13,7 @@ import { RecordNotFoundException } from '@shared/exceptions';
 @Injectable()
 export class LinksService {
   $link = new BehaviorSubject<LinksEntity | undefined>(undefined);
-  
+
   constructor(
     @InjectModel(ProvidersEnum.LINKS) private linksModel: Model<LinksEntity>,
   ) { }
@@ -23,15 +23,25 @@ export class LinksService {
   }
 
   getById(id: string): Promise<LinksEntity> {
-    return this.linksModel.findById(new Types.ObjectId(id)).exec();
+    return this.linksModel.findById(new Types.ObjectId(id)).populate({
+      path: 'profile',
+      populate: {
+        path: 'image'
+      }
+    }).lean().exec();
   }
 
   getOne(where: any): Promise<LinksEntity | undefined> {
-    return this.linksModel.findOne(where).exec();
+    return this.linksModel.findOne(where).populate({
+      path: 'profile',
+      populate: {
+        path: 'image'
+      }
+    }).exec();
   }
 
   async getAll(pagination?: PaginationProps): Promise<PaginatedResult<LinksEntity[]>> {
-    const {query, $and} = mapPagination(this.linksModel,{pagination});
+    const { query, $and } = mapPagination(this.linksModel, { pagination });
 
     const records = await query.exec();
     return {
@@ -50,7 +60,13 @@ export class LinksService {
 
   async update(id: string, body: UpdateLinkDTO): Promise<LinksEntity> {
     if (!await this.getById(id)) throw new Error('link.notFound');
-    return this.linksModel.findByIdAndUpdate(id, {$set: body}, { new: true }).exec();
+    // Ajustar o body para conter apenas o ObjectId em profile.image
+    if (body.profile?.image && typeof body.profile.image === 'object' && '_id' in body.profile.image) {
+      // @ts-ignore
+      body.profile.image = body.profile.image._id; // Extrai apenas o _id
+    }
+    console.log('🚀 ~ links.service.ts:52 ~ LinksService ~ update ~ body 🚀 ➡➡', body);
+    return this.linksModel.findByIdAndUpdate(new Types.ObjectId(id), { $set: body }, { new: true }).exec();
   }
 
   async delete(id: string): Promise<LinksEntity> {

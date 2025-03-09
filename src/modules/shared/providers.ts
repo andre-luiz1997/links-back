@@ -1,3 +1,4 @@
+import { FilesSchema } from '@modules/files/entities/files.entity';
 import { LinksSchema } from '@modules/links/entities/links.entity';
 import { RolesSchema } from '@modules/roles/entities/roles.entity';
 import { UsersSchema } from '@modules/users/entities/users.entity';
@@ -31,4 +32,10 @@ export const LinksProvider: IProvider = {
 	schema: LinksSchema
 };
 
-export const Providers = [UsersProvider, RolesProvider, PlansProvider, LinksProvider];
+
+export const FilesProvider: IProvider = {
+	name: ProvidersEnum.FILES,
+	schema: FilesSchema
+};
+
+export const Providers = [UsersProvider, RolesProvider, PlansProvider, LinksProvider, FilesProvider];

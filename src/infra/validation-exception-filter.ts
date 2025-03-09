@@ -3,6 +3,8 @@ import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpSta
 @Catch()
 export class ValidationExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
+    console.log('🚀 ~ validation-exception-filter.ts:6 ~ ValidationExceptionFilter ~ exception 🚀 ➡➡', exception);
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();

@@ -1,4 +1,4 @@
-import { configureDotEnv } from "@shared/functions";
+import { configureDotEnv} from "@shared/functions";
 
 configureDotEnv();
 
@@ -10,7 +10,8 @@ export enum ProvidersEnum {
 	AUTH = 'AUTH',
 	ROLES = 'ROLES',
 	PLANS = 'PLANS',
-	LINKS = 'LINKS'
+	LINKS = 'LINKS',
+	FILES = 'FILES',
 }
 
 export enum SettingsEnum {
