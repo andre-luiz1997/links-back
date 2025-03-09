@@ -56,8 +56,6 @@ export class FilesService {
 			if (filename.startsWith('http')) resolve(true);
 			try {
 				if (existsSync(file.path)) {
-					console.log('🚀 ~ files.service.ts:59 ~ FilesService ~ removeFileFromMemory ~ file.path 🚀 ➡➡', file.path);
-
 					unlink(file.path, () => {
 						resolve(true);
 					});
@@ -112,9 +110,7 @@ export class FilesService {
 	}
 
 	async delete(_id: string) {
-		console.log('🚀 ~ files.service.ts:113 ~ FilesService ~ delete ~ _id 🚀 ➡➡', _id);
 		const file = await this.fileModel.findById(new Types.ObjectId(_id));
-		console.log('🚀 ~ files.service.ts:116 ~ FilesService ~ delete ~ file 🚀 ➡➡', file);
 		if (file) {
 			await this.removeFileFromMemory(file);
 			// if (file.model && file.modelId) {

@@ -65,7 +65,6 @@ export class LinksService {
       // @ts-ignore
       body.profile.image = body.profile.image._id; // Extrai apenas o _id
     }
-    console.log('🚀 ~ links.service.ts:52 ~ LinksService ~ update ~ body 🚀 ➡➡', body);
     return this.linksModel.findByIdAndUpdate(new Types.ObjectId(id), { $set: body }, { new: true }).exec();
   }
 

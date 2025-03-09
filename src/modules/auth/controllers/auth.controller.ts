@@ -74,7 +74,6 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: CreateUserDTO
   ) {
-    console.log(77)
     const { access_token, refresh_token, user } = await this.authService.signup(body);
     return this.sign(res, user, access_token, refresh_token);
   }

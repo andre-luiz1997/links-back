@@ -3,6 +3,7 @@ import { IUsers } from "@modules/users/types/users";
 import { ILinkItem } from "./link-items";
 import { ILinkConfiguration } from "./link-configuration";
 import { IFiles } from "@modules/files/types/files";
+import { ILinkSocial } from "./link-social";
 
 export interface ILinkProfile {
   show: boolean;
@@ -18,6 +19,7 @@ export interface ILinks extends DBEntity {
   user: IUsers;
   status: boolean;
   title?: string;
+  socialLinks?: ILinkSocial[];
   items?: ILinkItem[];
   configuration: ILinkConfiguration;
   profile: ILinkProfile;

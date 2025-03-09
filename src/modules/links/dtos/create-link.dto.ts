@@ -9,6 +9,26 @@ import { ILinkConfiguration } from "../types/link-configuration";
 import { LinkConfigurationTheme } from "src/constants";
 import { CreateFileDTO } from "@modules/files/dtos";
 import { IFiles } from "@modules/files/types/files";
+import { ILinkSocial, LinkSocialCompanyIcon, LinkSocialCompanyName } from "../types/link-social";
+
+class LinkSocialDTO implements ILinkSocial {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  company: LinkSocialCompanyName;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  icon: LinkSocialCompanyIcon;
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  url: string;
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty()
+  status: boolean;
+}
 
 class LinkProfileDTO implements ILinkProfile {
   @ApiProperty()
@@ -97,6 +117,13 @@ export class CreateLinkDTO implements Omit<ILinks, '_id' | 'createdAt' | 'update
   @IsOptional()
   @IsString()
   title?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @Type(() => LinkSocialDTO)
+  @ValidateNested({ each: true })
+  socialLinks?: ILinkSocial[];
   
   @ApiProperty()
   @Type(() => LinkProfileDTO)

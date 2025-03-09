@@ -3,7 +3,6 @@ import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpSta
 @Catch()
 export class ValidationExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
-    console.log('🚀 ~ validation-exception-filter.ts:6 ~ ValidationExceptionFilter ~ exception 🚀 ➡➡', exception);
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -11,7 +10,6 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     // Verifica se o erro é de validação do Mongoose
     if (exception.name === 'ValidationError') {
-      console.log('🚀 ~ file: validation-exception-filter.ts:12 ~ ValidationExceptionFilter ~ exception 🚀 ➡➡', exception);
       const errors = Object.keys(exception.errors).map((key) => ({
         field: key,
         message: exception.errors[key].message,
